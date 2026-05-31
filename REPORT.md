@@ -317,7 +317,10 @@ particular is noisy (a re-run flipped *vlan-create-basic* between `perfect` and
 *column shapes* (Sonnet baseline ≫ Haiku baseline; rosetta lifts Haiku, not
 Sonnet) and the *mechanism findings* (#1, #2, #4), not any one number. Next rung:
 repeat each cell k times for a stability band, and add a closed-loop CHR readback
-condition. Raw transcripts: `data/live_pilot.jsonl`.
+condition (a first pass is done — see
+[§8 addendum: closed-loop CHR device grounding](docs/REPORT_LIVE_CHR.md), which
+found the device *rejects* the `blackhole=yes` gold and accepts the bare
+`blackhole` flag). Raw transcripts: `data/live_pilot.jsonl`.
 
 Caveats specific to this pilot: Haiku is a small model (a larger one would likely
 close the *type=blackhole* gap from training alone); "baseline" still runs inside
