@@ -184,6 +184,34 @@ See [`REPORT.md`](REPORT.md) for the full analysis. See
 [`docs/LIVE_AGENT_HARNESS.md`](docs/LIVE_AGENT_HARNESS.md) for the planned
 `claude` / `copilot` live-run adapter seam.
 
+## Live pilot (landed)
+
+A first **grounded live-agent pilot** is now committed. It runs `copilot -p`
+(the only live backend available in the dev environment), contrasts `baseline`
+vs `rosetta` context over 6 representative tasks, caches every call by prompt
+hash, and adds a closed-loop CHR demo via `quickchr exec`.
+
+- Harness: [`harness/live/run_live.py`](harness/live/run_live.py)
+  (`backends.py`, `contexts.py`, `adapter.py`).
+- Artifacts: `data/live_pilot.csv`, `data/live_pilot.jsonl`,
+  `data/live_chr_demo.csv` (`data/live_cache/` is git-ignored).
+- Findings: [`docs/REPORT_LIVE.md`](docs/REPORT_LIVE.md) — clearly marked **PILOT
+  evidence (n=6, single backend)**, kept separate from structural metrics.
+
+The headline grounded result: on `route-blackhole` the device (CHR 7.23)
+**rejected the corpus gold** (`blackhole=yes`) and **accepted the rosetta-guided
+output** (bare `blackhole` flag) — the static scorer had it backwards. Only
+device execution surfaced the oracle bug. This is the concrete case for an
+explain → validate → **run** loop and for scoped execution CLIs (`quickchr` /
+`centrs`) as a real validation tier rather than a 166-tool MCP firehose.
+
+Reproduce (uses cache, no live calls if present):
+
+```bash
+.venv/bin/python harness/live/run_live.py --dry-run   # prompts only
+.venv/bin/python harness/live/run_live.py             # writes data/live_pilot.*
+```
+
 ## Future live benchmark direction
 
 The next milestone is not a large model bake-off. It is a cheap, auditable live
@@ -194,14 +222,10 @@ or explain the result.
 The preferred path is:
 
 1. Build `prompt-only` dry runs from `tasks/corpus.yaml` and `approaches.yaml`.
-   → `harness/live/run_live.py --dry-run` does this.
-2. ✅ **Done.** A tiny `live-generation` pilot: one backend, ~5 tasks, no router
-   execution, final commands scored and syntax-validated.
-   → `harness/live/run_live.py` (baseline vs rosetta-context, `claude -p`,
-   ~$0.15). See [`REPORT.md`](REPORT.md) §8 for the findings.
-3. ✅ **Done.** A small `mini-matrix`: 3 conditions (baseline / rosetta-context /
-   skills-context) × 2 models (Haiku 4.5 + Sonnet 4.6) × 6 tasks.
-   → `harness/live/run_live.py` (~$0.79). REPORT.md §8.
+2. Run a tiny `live-generation` pilot: one backend, 3 to 5 tasks, no execution on
+  a router, final commands scored and syntax-validated.
+3. Expand to a small `mini-matrix`: 2 to 3 approaches across a fixed task subset,
+  capped at roughly 12 model calls by default.
 4. Add `closed-loop-chr` scenarios only after prompt construction, result
   capture, and CLI invocation are stable. Use disposable CHR fixtures,
   `/console/inspect` pre-validation, and readback checks.

@@ -20,7 +20,7 @@ gold,dns-static-record,/ip/dns/static add name=router.lan address=192.168.88.1,o
 gold,ipaddr-assign,/ip/address add address=192.168.88.1/24 interface=bridge1,ok,ok,chr:inspect,path ok (ip/address verb=add)
 gold,route-default-gateway,/ip/route add dst-address=0.0.0.0/0 gateway=192.168.1.1,ok,ok,chr:inspect,path ok (ip/route verb=add)
 gold,route-static-with-distance,/ip/route add dst-address=0.0.0.0/0 gateway=192.168.2.1 distance=2,ok,ok,chr:inspect,path ok (ip/route verb=add)
-gold,route-blackhole,/ip/route add dst-address=10.10.10.0/24 blackhole=yes,ok,ok,chr:inspect,path ok (ip/route verb=add)
+gold,route-blackhole,/ip/route add dst-address=10.10.10.0/24 blackhole,ok,ok,chr:inspect,path ok (ip/route verb=add)
 gold,wg-create-interface,/interface/wireguard add name=wg0 listen-port=13231,ok,ok,chr:inspect,path ok (interface/wireguard verb=add)
 gold,wg-assign-address,/ip/address add address=10.10.0.1/24 interface=wg0,ok,ok,chr:inspect,path ok (ip/address verb=add)
 gold,wg-add-peer,"/interface/wireguard/peers add interface=wg0 public-key=""REPLACE_PUBKEY="" allowed-address=10.10.0.2/32",ok,ok,chr:inspect,path ok (interface/wireguard/peers verb=add)

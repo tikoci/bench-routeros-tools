@@ -54,3 +54,41 @@ class CopilotCliAdapter(CliAdapter):
     def __init__(self, repo_root: Path):
         super().__init__("copilot", repo_root)
 
+
+# --------------------------------------------------------------------------- #
+# Concrete live adapter (implemented seam)
+# --------------------------------------------------------------------------- #
+class LiveAdapter:
+    """Adapter that actually invokes a CLI backend and returns parsed commands.
+
+    This is the realized form of the ``AgentAdapter`` protocol. It composes the
+    approach-aware prompt builder (``harness.live.contexts``) with a CLI backend
+    (``harness.live.backends``). Prefer ``harness/live/run_live.py`` for batch
+    runs -- it adds caching, scoring, validation, and budget control around this.
+    """
+
+    def __init__(self, backend_name: str = "copilot", model: str = "default"):
+        from harness.live.backends import get_backend
+        self.backend = get_backend(backend_name, model)
+
+    def run_task(self, task: dict, approach: str) -> AgentRunResult:
+        from harness.live.contexts import build_prompt
+        prompt, meta = build_prompt(task, approach)
+        res = self.backend.generate(prompt)
+        return AgentRunResult(
+            approach=approach,
+            task_id=task["id"],
+            commands=res.commands,
+            stdout=res.stdout,
+            stderr=res.stderr,
+            exit_code=res.exit_code,
+            metadata={
+                "backend": res.backend,
+                "model": res.model,
+                "argv": res.argv,
+                "available": res.available,
+                "error": res.error,
+                **meta,
+            },
+        )
+
