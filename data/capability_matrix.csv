@@ -1,0 +1,7 @@
+approach,discover_commands,explain_semantics,validate_before_run,read_live_state,dry_run,write_config,destructive_write,post_change_verify,version_aware
+baseline,partial,partial,no,no,no,no,no,no,no
+skills,partial,yes,no,no,no,no,no,no,partial
+rosetta,yes,yes,partial,no,no,no,no,no,yes
+skills+rosetta,yes,yes,partial,no,no,no,no,no,yes
+mcp,partial,no,no,yes,no,yes,yes,yes,no
+mcp+rosetta+skills,yes,yes,partial,yes,no,yes,yes,yes,yes

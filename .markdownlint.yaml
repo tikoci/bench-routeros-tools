@@ -1,0 +1,46 @@
+# Disable line length: technical tables, URLs, and command examples are clearer unwrapped.
+MD013: false
+
+# Disable heading increment: reference docs sometimes use skipped heading levels intentionally.
+MD001: false
+
+# Disable table column spacing: formatter differences create churn without improving meaning.
+MD060: false
+
+# Require language tags on fenced code for grep-ability and syntax highlighting.
+MD040: true
+
+# Require fenced code blocks, not indented blocks, for consistency.
+MD046:
+  style: fenced
+
+# Require backtick fences, not tildes, for consistency.
+MD048:
+  style: backtick
+
+# Check local link fragments so README/report anchors do not rot.
+MD051: true
+
+# Check table column counts to catch malformed Markdown tables.
+MD056: true
+
+# Require blank lines around tables to avoid rendering surprises.
+MD058: true
+
+# Allow semantic HTML elements GitHub renders and that add real value.
+MD033:
+  allowed_elements:
+    - kbd
+    - mark
+    - details
+    - summary
+    - sub
+    - sup
+    - abbr
+    - dl
+    - dt
+    - dd
+    - figure
+    - figcaption
+    - br
+

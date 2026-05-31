@@ -1,0 +1,13 @@
+ignores:
+  - "AGENTS.md"
+  - "CLAUDE.md"
+  - ".github/copilot-instructions.md"
+  - ".github/instructions/**"
+  - ".cursor/rules/**"
+  - ".windsurf/rules/**"
+  - ".cline/rules/**"
+  - ".roo/rules/**"
+  - ".amazonq/rules/**"
+  - "**/node_modules/**"
+  - ".venv/**"
+

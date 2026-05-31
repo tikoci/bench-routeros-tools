@@ -1,0 +1,11598 @@
+[
+{
+"name": "create_backup",
+"title": null,
+"description": "Creates a system backup on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name"
+},
+"dont_encrypt": {
+"default": false,
+"title": "Dont Encrypt",
+"type": "boolean"
+},
+"include_password": {
+"default": true,
+"title": "Include Password",
+"type": "boolean"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"title": "mikrotik_create_backupArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_backupOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Backup",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_backups",
+"title": null,
+"description": "Lists backup files on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"include_exports": {
+"default": false,
+"title": "Include Exports",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_backupsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_backupsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Backups",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_export",
+"title": null,
+"description": "Creates a configuration export file (rsc/json/xml) on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name"
+},
+"file_format": {
+"default": "rsc",
+"enum": [
+"rsc",
+"json",
+"xml"
+],
+"title": "File Format",
+"type": "string"
+},
+"export_type": {
+"default": "full",
+"enum": [
+"full",
+"compact",
+"verbose"
+],
+"title": "Export Type",
+"type": "string"
+},
+"hide_sensitive": {
+"default": true,
+"title": "Hide Sensitive",
+"type": "boolean"
+},
+"verbose": {
+"default": false,
+"title": "Verbose",
+"type": "boolean"
+},
+"compact": {
+"default": false,
+"title": "Compact",
+"type": "boolean"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"title": "mikrotik_create_exportArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_exportOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Config Export",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "export_section",
+"title": null,
+"description": "Exports a specific RouterOS configuration section to a file.\n\nNotes:\n    section: RouterOS path without leading slash e.g. \"ip address\", \"interface vlan\",\n        \"ip firewall filter\", \"ip firewall nat\", \"queue simple\"\n",
+"inputSchema": {
+"properties": {
+"section": {
+"title": "Section",
+"type": "string"
+},
+"name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name"
+},
+"hide_sensitive": {
+"default": true,
+"title": "Hide Sensitive",
+"type": "boolean"
+},
+"compact": {
+"default": false,
+"title": "Compact",
+"type": "boolean"
+}
+},
+"required": [
+"section"
+],
+"title": "mikrotik_export_sectionArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_export_sectionOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Export Config Section",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "download_file",
+"title": null,
+"description": "Downloads a backup or export file from the MikroTik device as base64-encoded content.",
+"inputSchema": {
+"properties": {
+"filename": {
+"title": "Filename",
+"type": "string"
+},
+"file_type": {
+"default": "backup",
+"enum": [
+"backup",
+"export"
+],
+"title": "File Type",
+"type": "string"
+}
+},
+"required": [
+"filename"
+],
+"title": "mikrotik_download_fileArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_download_fileOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Download File",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "upload_file",
+"title": null,
+"description": "Uploads a base64-encoded file to the MikroTik device (for restore operations).",
+"inputSchema": {
+"properties": {
+"filename": {
+"title": "Filename",
+"type": "string"
+},
+"content_base64": {
+"title": "Content Base64",
+"type": "string"
+}
+},
+"required": [
+"filename",
+"content_base64"
+],
+"title": "mikrotik_upload_fileArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_upload_fileOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Upload File",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "restore_backup",
+"title": null,
+"description": "Restores a system backup on the MikroTik device; triggers a reboot.",
+"inputSchema": {
+"properties": {
+"filename": {
+"title": "Filename",
+"type": "string"
+},
+"password": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Password"
+}
+},
+"required": [
+"filename"
+],
+"title": "mikrotik_restore_backupArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_restore_backupOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Restore Backup",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "import_configuration",
+"title": null,
+"description": "Imports and executes a RouterOS configuration script (.rsc file) on the device.",
+"inputSchema": {
+"properties": {
+"filename": {
+"title": "Filename",
+"type": "string"
+},
+"run_after_reset": {
+"default": false,
+"title": "Run After Reset",
+"type": "boolean"
+},
+"verbose": {
+"default": false,
+"title": "Verbose",
+"type": "boolean"
+}
+},
+"required": [
+"filename"
+],
+"title": "mikrotik_import_configurationArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_import_configurationOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Import Configuration",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_file",
+"title": null,
+"description": "Removes a file from the MikroTik device filesystem.",
+"inputSchema": {
+"properties": {
+"filename": {
+"title": "Filename",
+"type": "string"
+}
+},
+"required": [
+"filename"
+],
+"title": "mikrotik_remove_fileArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_fileOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove File",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "backup_info",
+"title": null,
+"description": "Gets detailed information about a backup file on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"filename": {
+"title": "Filename",
+"type": "string"
+}
+},
+"required": [
+"filename"
+],
+"title": "mikrotik_backup_infoArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_backup_infoOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Backup File Info",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_dhcp_server",
+"title": null,
+"description": "Creates a DHCP server bound to the specified interface on the MikroTik device.\n\nNotes:\n    lease_time: duration e.g. \"1d\", \"12h\", \"30m\", \"1h30m\"\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"interface": {
+"title": "Interface",
+"type": "string"
+},
+"lease_time": {
+"default": "1d",
+"title": "Lease Time",
+"type": "string"
+},
+"address_pool": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Address Pool"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+},
+"authoritative": {
+"default": "yes",
+"enum": [
+"yes",
+"no",
+"after-2sec-delay"
+],
+"title": "Authoritative",
+"type": "string"
+},
+"delay_threshold": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Delay Threshold"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"required": [
+"name",
+"interface"
+],
+"title": "mikrotik_create_dhcp_serverArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_dhcp_serverOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create DHCP Server",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_dhcp_servers",
+"title": null,
+"description": "Lists DHCP servers on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"interface_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Interface Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"invalid_only": {
+"default": false,
+"title": "Invalid Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_dhcp_serversArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_dhcp_serversOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List DHCP Servers",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_dhcp_server",
+"title": null,
+"description": "Gets detailed information about a specific DHCP server.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_dhcp_serverArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_dhcp_serverOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get DHCP Server",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_dhcp_network",
+"title": null,
+"description": "Creates a DHCP network configuration (gateway, DNS, domain, etc.) on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"network": {
+"title": "Network",
+"type": "string"
+},
+"gateway": {
+"title": "Gateway",
+"type": "string"
+},
+"netmask": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Netmask"
+},
+"dns_servers": {
+"anyOf": [
+{
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dns Servers"
+},
+"domain": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Domain"
+},
+"wins_servers": {
+"anyOf": [
+{
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Wins Servers"
+},
+"ntp_servers": {
+"anyOf": [
+{
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Ntp Servers"
+},
+"dhcp_option": {
+"anyOf": [
+{
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dhcp Option"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"required": [
+"network",
+"gateway"
+],
+"title": "mikrotik_create_dhcp_networkArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_dhcp_networkOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create DHCP Network",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_dhcp_pool",
+"title": null,
+"description": "Creates a DHCP address pool with the given IP ranges on the MikroTik device.\n\nNotes:\n    ranges: hyphen-separated range(s) e.g. \"192.168.1.1-192.168.1.100\"\n        Multiple ranges comma-separated: \"10.0.0.1-10.0.0.50,10.0.0.100-10.0.0.120\"\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"ranges": {
+"title": "Ranges",
+"type": "string"
+},
+"next_pool": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Next Pool"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"required": [
+"name",
+"ranges"
+],
+"title": "mikrotik_create_dhcp_poolArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_dhcp_poolOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create DHCP Pool",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_dhcp_server",
+"title": null,
+"description": "Removes a DHCP server from the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_dhcp_serverArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_dhcp_serverOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove DHCP Server",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "set_dns_servers",
+"title": null,
+"description": "Sets DNS server configuration.",
+"inputSchema": {
+"properties": {
+"servers": {
+"items": {
+"type": "string"
+},
+"title": "Servers",
+"type": "array"
+},
+"allow_remote_requests": {
+"default": false,
+"title": "Allow Remote Requests",
+"type": "boolean"
+},
+"max_udp_packet_size": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Max Udp Packet Size"
+},
+"max_concurrent_queries": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Max Concurrent Queries"
+},
+"cache_size": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cache Size"
+},
+"cache_max_ttl": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cache Max Ttl"
+},
+"use_doh": {
+"default": false,
+"title": "Use Doh",
+"type": "boolean"
+},
+"doh_server": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Doh Server"
+},
+"verify_doh_cert": {
+"default": true,
+"title": "Verify Doh Cert",
+"type": "boolean"
+}
+},
+"required": [
+"servers"
+],
+"title": "mikrotik_set_dns_serversArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_set_dns_serversOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Set DNS Servers",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_dns_settings",
+"title": null,
+"description": "Gets current DNS configuration.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_get_dns_settingsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_dns_settingsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "DNS Settings",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "add_dns_static",
+"title": null,
+"description": "Adds a static DNS entry.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Address"
+},
+"cname": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cname"
+},
+"mx_preference": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mx Preference"
+},
+"mx_exchange": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mx Exchange"
+},
+"text": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Text"
+},
+"srv_priority": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Srv Priority"
+},
+"srv_weight": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Srv Weight"
+},
+"srv_port": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Srv Port"
+},
+"srv_target": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Srv Target"
+},
+"ttl": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Ttl"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+},
+"regexp": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Regexp"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_add_dns_staticArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_add_dns_staticOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add DNS Static Entry",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_dns_static",
+"title": null,
+"description": "Lists static DNS entries.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"address_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Address Filter"
+},
+"type_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Type Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"regexp_only": {
+"default": false,
+"title": "Regexp Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_dns_staticArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_dns_staticOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List DNS Static Entries",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_dns_static",
+"title": null,
+"description": "Gets details of a specific static DNS entry.",
+"inputSchema": {
+"properties": {
+"entry_id": {
+"title": "Entry Id",
+"type": "string"
+}
+},
+"required": [
+"entry_id"
+],
+"title": "mikrotik_get_dns_staticArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_dns_staticOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get DNS Static Entry",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_dns_static",
+"title": null,
+"description": "Updates a static DNS entry.",
+"inputSchema": {
+"properties": {
+"entry_id": {
+"title": "Entry Id",
+"type": "string"
+},
+"name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name"
+},
+"address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Address"
+},
+"cname": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cname"
+},
+"mx_preference": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mx Preference"
+},
+"mx_exchange": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mx Exchange"
+},
+"text": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Text"
+},
+"srv_priority": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Srv Priority"
+},
+"srv_weight": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Srv Weight"
+},
+"srv_port": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Srv Port"
+},
+"srv_target": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Srv Target"
+},
+"ttl": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Ttl"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+},
+"regexp": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Regexp"
+}
+},
+"required": [
+"entry_id"
+],
+"title": "mikrotik_update_dns_staticArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_dns_staticOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update DNS Static Entry",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_dns_static",
+"title": null,
+"description": "Removes a static DNS entry.",
+"inputSchema": {
+"properties": {
+"entry_id": {
+"title": "Entry Id",
+"type": "string"
+}
+},
+"required": [
+"entry_id"
+],
+"title": "mikrotik_remove_dns_staticArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_dns_staticOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove DNS Static Entry",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_dns_static",
+"title": null,
+"description": "Enables a static DNS entry.",
+"inputSchema": {
+"properties": {
+"entry_id": {
+"title": "Entry Id",
+"type": "string"
+}
+},
+"required": [
+"entry_id"
+],
+"title": "mikrotik_enable_dns_staticArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_dns_staticOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable DNS Static Entry",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_dns_static",
+"title": null,
+"description": "Disables a static DNS entry.",
+"inputSchema": {
+"properties": {
+"entry_id": {
+"title": "Entry Id",
+"type": "string"
+}
+},
+"required": [
+"entry_id"
+],
+"title": "mikrotik_disable_dns_staticArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_dns_staticOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable DNS Static Entry",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_dns_cache",
+"title": null,
+"description": "Gets the current DNS cache.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_get_dns_cacheArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_dns_cacheOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "DNS Cache",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "flush_dns_cache",
+"title": null,
+"description": "Flushes the DNS cache.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_flush_dns_cacheArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_flush_dns_cacheOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Flush DNS Cache",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_dns_cache_statistics",
+"title": null,
+"description": "Gets DNS cache statistics.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_get_dns_cache_statisticsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_dns_cache_statisticsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "DNS Cache Statistics",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "add_dns_regexp",
+"title": null,
+"description": "Adds a DNS regexp entry.",
+"inputSchema": {
+"properties": {
+"regexp": {
+"title": "Regexp",
+"type": "string"
+},
+"address": {
+"title": "Address",
+"type": "string"
+},
+"ttl": {
+"default": "1d",
+"title": "Ttl",
+"type": "string"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+}
+},
+"required": [
+"regexp",
+"address"
+],
+"title": "mikrotik_add_dns_regexpArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_add_dns_regexpOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add DNS Regexp Entry",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "test_dns_query",
+"title": null,
+"description": "Tests a DNS query.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"server": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Server"
+},
+"type": {
+"default": "A",
+"title": "Type",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_test_dns_queryArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_test_dns_queryOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Test DNS Query",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "export_dns_config",
+"title": null,
+"description": "Exports DNS configuration to a file.",
+"inputSchema": {
+"properties": {
+"filename": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Filename"
+}
+},
+"title": "mikrotik_export_dns_configArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_export_dns_configOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Export DNS Config",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_filter_rule",
+"title": null,
+"description": "Creates a firewall filter rule in the specified chain on the MikroTik device.\n\nNotes:\n    connection_state: comma-separated e.g. \"established,related,new,invalid\"\n    limit: RouterOS rate/burst string e.g. \"10,5:packet\" or \"10/1s:packet\"\n    tcp_flags: RouterOS flag expression e.g. \"syn,!ack\"\n    place_before: rule number or ID (*N) to insert before e.g. \"0\" or \"*3\"\n",
+"inputSchema": {
+"properties": {
+"chain": {
+"enum": [
+"input",
+"forward",
+"output"
+],
+"title": "Chain",
+"type": "string"
+},
+"action": {
+"enum": [
+"accept",
+"drop",
+"reject",
+"jump",
+"log",
+"passthrough",
+"return",
+"tarpit",
+"fasttrack-connection"
+],
+"title": "Action",
+"type": "string"
+},
+"src_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Address"
+},
+"dst_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Address"
+},
+"src_port": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Port"
+},
+"dst_port": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Port"
+},
+"protocol": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Protocol"
+},
+"in_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "In Interface"
+},
+"out_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Out Interface"
+},
+"connection_state": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Connection State"
+},
+"connection_nat_state": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Connection Nat State"
+},
+"src_address_list": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Address List"
+},
+"dst_address_list": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Address List"
+},
+"limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit"
+},
+"tcp_flags": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Tcp Flags"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+},
+"log": {
+"default": false,
+"title": "Log",
+"type": "boolean"
+},
+"log_prefix": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Log Prefix"
+},
+"place_before": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Place Before"
+}
+},
+"required": [
+"chain",
+"action"
+],
+"title": "mikrotik_create_filter_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_filter_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Firewall Filter Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_filter_rules",
+"title": null,
+"description": "Lists firewall filter rules on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"chain_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Chain Filter"
+},
+"action_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Action Filter"
+},
+"src_address_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Address Filter"
+},
+"dst_address_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Address Filter"
+},
+"protocol_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Protocol Filter"
+},
+"interface_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Interface Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"invalid_only": {
+"default": false,
+"title": "Invalid Only",
+"type": "boolean"
+},
+"dynamic_only": {
+"default": false,
+"title": "Dynamic Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_filter_rulesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_filter_rulesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Firewall Filter Rules",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_filter_rule",
+"title": null,
+"description": "Gets detailed information about a specific firewall filter rule.\n\nNotes:\n    rule_id: use the ID from list output e.g. \"*1\" or \"0\"\n",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_get_filter_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_filter_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Firewall Filter Rule",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_filter_rule",
+"title": null,
+"description": "Updates an existing firewall filter rule on the MikroTik device.\n\nNotes:\n    rule_id: use the ID from list output e.g. \"*1\" or \"0\"\n    connection_state: comma-separated e.g. \"established,related\"\n    limit: RouterOS rate string e.g. \"10,5:packet\"\n    tcp_flags: RouterOS flag expression e.g. \"syn,!ack\"\n    Pass \"\" to clear an optional field (e.g. src_address=\"\").\n",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+},
+"chain": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Chain"
+},
+"action": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Action"
+},
+"src_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Address"
+},
+"dst_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Address"
+},
+"src_port": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Port"
+},
+"dst_port": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Port"
+},
+"protocol": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Protocol"
+},
+"in_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "In Interface"
+},
+"out_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Out Interface"
+},
+"connection_state": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Connection State"
+},
+"connection_nat_state": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Connection Nat State"
+},
+"src_address_list": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Address List"
+},
+"dst_address_list": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Address List"
+},
+"limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit"
+},
+"tcp_flags": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Tcp Flags"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+},
+"log": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Log"
+},
+"log_prefix": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Log Prefix"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_update_filter_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_filter_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update Firewall Filter Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_filter_rule",
+"title": null,
+"description": "Removes a firewall filter rule from the MikroTik device.\n\nNotes:\n    rule_id: use the ID from list output e.g. \"*1\" or \"0\"\n",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_remove_filter_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_filter_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove Firewall Filter Rule",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "move_filter_rule",
+"title": null,
+"description": "Moves a firewall filter rule to a different position in the chain.\n\nNotes:\n    rule_id: use the ID from list output e.g. \"*1\" or \"0\"\n    destination: 0-based target position index\n",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+},
+"destination": {
+"title": "Destination",
+"type": "integer"
+}
+},
+"required": [
+"rule_id",
+"destination"
+],
+"title": "mikrotik_move_filter_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_move_filter_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Move Filter Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_filter_rule",
+"title": null,
+"description": "Enables a firewall filter rule.",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_enable_filter_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_filter_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable Filter Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_filter_rule",
+"title": null,
+"description": "Disables a firewall filter rule.",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_disable_filter_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_filter_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable Filter Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_basic_firewall_setup",
+"title": null,
+"description": "Creates a basic firewall setup with common security rules on the MikroTik device.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_create_basic_firewall_setupArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_basic_firewall_setupOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Basic Firewall Setup",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_nat_rule",
+"title": null,
+"description": "Creates a NAT rule (srcnat or dstnat) on the MikroTik device.\n\nNotes:\n    to_addresses: single IP or range e.g. \"10.0.0.1\" or \"10.0.0.1-10.0.0.10\"\n    to_ports: single port or range e.g. \"8080\" or \"8080-8090\"\n    place_before: rule number or ID (*N) to insert before e.g. \"0\" or \"*3\"\n",
+"inputSchema": {
+"properties": {
+"chain": {
+"enum": [
+"srcnat",
+"dstnat"
+],
+"title": "Chain",
+"type": "string"
+},
+"action": {
+"title": "Action",
+"type": "string"
+},
+"src_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Address"
+},
+"dst_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Address"
+},
+"src_port": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Port"
+},
+"dst_port": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Port"
+},
+"protocol": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Protocol"
+},
+"in_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "In Interface"
+},
+"out_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Out Interface"
+},
+"to_addresses": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "To Addresses"
+},
+"to_ports": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "To Ports"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+},
+"log": {
+"default": false,
+"title": "Log",
+"type": "boolean"
+},
+"log_prefix": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Log Prefix"
+},
+"place_before": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Place Before"
+}
+},
+"required": [
+"chain",
+"action"
+],
+"title": "mikrotik_create_nat_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_nat_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create NAT Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_nat_rules",
+"title": null,
+"description": "Lists NAT rules on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"chain_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Chain Filter"
+},
+"action_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Action Filter"
+},
+"src_address_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Address Filter"
+},
+"dst_address_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Address Filter"
+},
+"protocol_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Protocol Filter"
+},
+"interface_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Interface Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"invalid_only": {
+"default": false,
+"title": "Invalid Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_nat_rulesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_nat_rulesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List NAT Rules",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_nat_rule",
+"title": null,
+"description": "Gets detailed information about a specific NAT rule.\n\nNotes:\n    rule_id: use the ID from list output e.g. \"*1\" or \"0\"\n",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_get_nat_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_nat_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get NAT Rule",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_nat_rule",
+"title": null,
+"description": "Updates an existing NAT rule on the MikroTik device.\n\nNotes:\n    rule_id: use the ID from list output e.g. \"*1\" or \"0\"\n    to_addresses: single IP or range e.g. \"10.0.0.1\" or \"10.0.0.1-10.0.0.10\"\n    to_ports: single port or range e.g. \"8080\" or \"8080-8090\"\n    Pass \"\" to clear an optional field.\n",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+},
+"chain": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Chain"
+},
+"action": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Action"
+},
+"src_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Address"
+},
+"dst_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Address"
+},
+"src_port": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Src Port"
+},
+"dst_port": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Port"
+},
+"protocol": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Protocol"
+},
+"in_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "In Interface"
+},
+"out_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Out Interface"
+},
+"to_addresses": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "To Addresses"
+},
+"to_ports": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "To Ports"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+},
+"log": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Log"
+},
+"log_prefix": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Log Prefix"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_update_nat_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_nat_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update NAT Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_nat_rule",
+"title": null,
+"description": "Removes a NAT rule from the MikroTik device.\n\nNotes:\n    rule_id: use the ID from list output e.g. \"*1\" or \"0\"\n",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_remove_nat_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_nat_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove NAT Rule",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "move_nat_rule",
+"title": null,
+"description": "Moves a NAT rule to a different position in the chain.\n\nNotes:\n    rule_id: use the ID from list output e.g. \"*1\" or \"0\"\n    destination: 0-based target position index\n",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+},
+"destination": {
+"title": "Destination",
+"type": "integer"
+}
+},
+"required": [
+"rule_id",
+"destination"
+],
+"title": "mikrotik_move_nat_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_move_nat_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Move NAT Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_nat_rule",
+"title": null,
+"description": "Enables a NAT rule.",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_enable_nat_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_nat_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable NAT Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_nat_rule",
+"title": null,
+"description": "Disables a NAT rule.",
+"inputSchema": {
+"properties": {
+"rule_id": {
+"title": "Rule Id",
+"type": "string"
+}
+},
+"required": [
+"rule_id"
+],
+"title": "mikrotik_disable_nat_ruleArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_nat_ruleOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable NAT Rule",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_interfaces",
+"title": null,
+"description": "Lists all interfaces on the MikroTik device (ethernet, bridge, WireGuard,\nPPPoE, VLAN, WiFi, SFP, LTE, loopback, and any other type).\n\nNotes:\n    type_filter: RouterOS interface type e.g. \"ether\", \"bridge\", \"vlan\",\n        \"wg\", \"pppoe-out\", \"wifi\", \"lte\", \"loopback\"\n    name_filter: partial name match e.g. \"ether\" matches ether1, ether2 \u2026\n",
+"inputSchema": {
+"properties": {
+"type_filter": {
+"anyOf": [
+{
+"enum": [
+"ether",
+"wg",
+"bridge",
+"vlan",
+"pppoe-out",
+"pppoe-server",
+"wifi",
+"wireless",
+"lte",
+"loopback",
+"sfp",
+"sfp-sfpplus"
+],
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Type Filter"
+},
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"running_only": {
+"default": false,
+"title": "Running Only",
+"type": "boolean"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_interfacesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_interfacesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Interfaces",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_interface",
+"title": null,
+"description": "Gets detailed information about a specific interface by name.\n\nNotes:\n    name: exact interface name e.g. \"ether1\", \"bridge\", \"pppoe-out1\", \"wg0\"\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Interface",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_interface",
+"title": null,
+"description": "Enables an interface on the MikroTik device.\n\nNotes:\n    name: exact interface name e.g. \"ether1\", \"bridge\", \"pppoe-out1\"\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_enable_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_interface",
+"title": null,
+"description": "Disables an interface on the MikroTik device.\n\nNotes:\n    name: exact interface name e.g. \"ether1\", \"bridge\", \"pppoe-out1\"\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_disable_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "add_ip_address",
+"title": null,
+"description": "Adds an IP address to an interface on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"address": {
+"title": "Address",
+"type": "string"
+},
+"interface": {
+"title": "Interface",
+"type": "string"
+},
+"network": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Network"
+},
+"broadcast": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Broadcast"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+}
+},
+"required": [
+"address",
+"interface"
+],
+"title": "mikrotik_add_ip_addressArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_add_ip_addressOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add IP Address",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_ip_addresses",
+"title": null,
+"description": "Lists IP addresses on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"interface_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Interface Filter"
+},
+"address_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Address Filter"
+},
+"network_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Network Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"dynamic_only": {
+"default": false,
+"title": "Dynamic Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_ip_addressesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_ip_addressesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List IP Addresses",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_ip_address",
+"title": null,
+"description": "Gets detailed information about a specific IP address by ID or address value.",
+"inputSchema": {
+"properties": {
+"address_id": {
+"title": "Address Id",
+"type": "string"
+}
+},
+"required": [
+"address_id"
+],
+"title": "mikrotik_get_ip_addressArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_ip_addressOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get IP Address",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_ip_address",
+"title": null,
+"description": "Removes an IP address from the MikroTik device by ID or address value.",
+"inputSchema": {
+"properties": {
+"address_id": {
+"title": "Address Id",
+"type": "string"
+}
+},
+"required": [
+"address_id"
+],
+"title": "mikrotik_remove_ip_addressArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_ip_addressOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove IP Address",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_ip_pool",
+"title": null,
+"description": "Creates an IP pool with the given address ranges on the MikroTik device.\n\nNotes:\n    ranges: hyphen-separated range(s) e.g. \"192.168.1.1-192.168.1.100\"\n        Multiple ranges comma-separated: \"10.0.0.1-10.0.0.50,10.0.0.100-10.0.0.120\"\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"ranges": {
+"title": "Ranges",
+"type": "string"
+},
+"next_pool": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Next Pool"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"required": [
+"name",
+"ranges"
+],
+"title": "mikrotik_create_ip_poolArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_ip_poolOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add IP Pool",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_ip_pools",
+"title": null,
+"description": "Lists IP pools on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"ranges_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Ranges Filter"
+},
+"include_used": {
+"default": false,
+"title": "Include Used",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_ip_poolsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_ip_poolsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List IP Pools",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_ip_pool",
+"title": null,
+"description": "Gets detailed information about a specific IP pool including used address count.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_ip_poolArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_ip_poolOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get IP Pool",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_ip_pool",
+"title": null,
+"description": "Updates an existing IP pool's name, ranges, or next-pool reference.\n\nNotes:\n    ranges: hyphen-separated range(s) e.g. \"192.168.1.1-192.168.1.100\"\n        Multiple ranges comma-separated: \"10.0.0.1-10.0.0.50,10.0.0.100-10.0.0.120\"\n    Pass \"\" for next_pool to clear it.\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"new_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "New Name"
+},
+"ranges": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Ranges"
+},
+"next_pool": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Next Pool"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_update_ip_poolArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_ip_poolOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update IP Pool",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_ip_pool",
+"title": null,
+"description": "Removes an IP pool from the MikroTik device (fails if pool is in use).",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_ip_poolArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_ip_poolOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove IP Pool",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_ip_pool_used",
+"title": null,
+"description": "Lists currently used (allocated) addresses from IP pools.",
+"inputSchema": {
+"properties": {
+"pool_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pool Name"
+},
+"address_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Address Filter"
+},
+"mac_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mac Filter"
+},
+"info_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Info Filter"
+}
+},
+"title": "mikrotik_list_ip_pool_usedArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_ip_pool_usedOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List IP Pool Used",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "expand_ip_pool",
+"title": null,
+"description": "Expands an existing IP pool by appending additional address ranges.\n\nNotes:\n    additional_ranges: hyphen-separated range(s) e.g. \"192.168.1.101-192.168.1.150\"\n        Multiple ranges comma-separated: \"10.0.0.51-10.0.0.60,10.0.0.70-10.0.0.80\"\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"additional_ranges": {
+"title": "Additional Ranges",
+"type": "string"
+}
+},
+"required": [
+"name",
+"additional_ranges"
+],
+"title": "mikrotik_expand_ip_poolArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_expand_ip_poolOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Expand IP Pool",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_logs",
+"title": null,
+"description": "Gets logs from the MikroTik device with optional topic, time, and message filters.",
+"inputSchema": {
+"properties": {
+"topics": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Topics"
+},
+"action": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Action"
+},
+"time_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Time Filter"
+},
+"message_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Message Filter"
+},
+"prefix_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Prefix Filter"
+},
+"limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit"
+},
+"follow": {
+"default": false,
+"title": "Follow",
+"type": "boolean"
+},
+"print_as": {
+"default": "value",
+"enum": [
+"value",
+"detail",
+"terse"
+],
+"title": "Print As",
+"type": "string"
+}
+},
+"title": "mikrotik_get_logsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_logsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Logs",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_logs_by_severity",
+"title": null,
+"description": "Gets logs filtered by severity level (debug/info/warning/error/critical).",
+"inputSchema": {
+"properties": {
+"severity": {
+"enum": [
+"debug",
+"info",
+"warning",
+"error",
+"critical"
+],
+"title": "Severity",
+"type": "string"
+},
+"time_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Time Filter"
+},
+"limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit"
+}
+},
+"required": [
+"severity"
+],
+"title": "mikrotik_get_logs_by_severityArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_logs_by_severityOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Logs by Severity",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_logs_by_topic",
+"title": null,
+"description": "Gets logs for a specific topic/facility (system, dhcp, interface, firewall, etc.).",
+"inputSchema": {
+"properties": {
+"topic": {
+"title": "Topic",
+"type": "string"
+},
+"time_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Time Filter"
+},
+"limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit"
+}
+},
+"required": [
+"topic"
+],
+"title": "mikrotik_get_logs_by_topicArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_logs_by_topicOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Logs by Topic",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "search_logs",
+"title": null,
+"description": "Searches log messages for a specific term.",
+"inputSchema": {
+"properties": {
+"search_term": {
+"title": "Search Term",
+"type": "string"
+},
+"time_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Time Filter"
+},
+"case_sensitive": {
+"default": false,
+"title": "Case Sensitive",
+"type": "boolean"
+},
+"limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit"
+}
+},
+"required": [
+"search_term"
+],
+"title": "mikrotik_search_logsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_search_logsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Search Logs",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_system_events",
+"title": null,
+"description": "Gets system-related log events (login, reboot, config-change, etc.).",
+"inputSchema": {
+"properties": {
+"event_type": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Event Type"
+},
+"time_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Time Filter"
+},
+"limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit"
+}
+},
+"title": "mikrotik_get_system_eventsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_system_eventsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "System Events",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_security_logs",
+"title": null,
+"description": "Gets security-related log entries (login failures, blocked connections, etc.).",
+"inputSchema": {
+"properties": {
+"time_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Time Filter"
+},
+"limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit"
+}
+},
+"title": "mikrotik_get_security_logsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_security_logsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Security Logs",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "clear_logs",
+"title": null,
+"description": "Clears all logs from the MikroTik device. This action cannot be undone.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_clear_logsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_clear_logsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Clear Logs",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_log_statistics",
+"title": null,
+"description": "Gets log entry counts by topic and severity from the MikroTik device.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_get_log_statisticsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_log_statisticsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Log Statistics",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "export_logs",
+"title": null,
+"description": "Exports logs to a file on the MikroTik device with optional topic and time filters.",
+"inputSchema": {
+"properties": {
+"filename": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Filename"
+},
+"topics": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Topics"
+},
+"time_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Time Filter"
+},
+"format": {
+"default": "plain",
+"enum": [
+"plain",
+"csv"
+],
+"title": "Format",
+"type": "string"
+}
+},
+"title": "mikrotik_export_logsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_export_logsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Export Logs",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "monitor_logs",
+"title": null,
+"description": "Monitors MikroTik logs in near-real-time for a limited duration (max 60s).",
+"inputSchema": {
+"properties": {
+"topics": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Topics"
+},
+"action": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Action"
+},
+"duration": {
+"default": 10,
+"title": "Duration",
+"type": "integer"
+}
+},
+"title": "mikrotik_monitor_logsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_monitor_logsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Monitor Logs",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_queue_type",
+"title": null,
+"description": "Creates a queue type (qdisc). kind selects the discipline (cake, fq-codel, sfq, red, pcq, pfifo, bfifo); remaining params are per-discipline options.\n\nNotes:\n    pcq_rate: bandwidth per flow e.g. \"1M\", \"512k\"\n    pcq_classifier: comma-separated classifiers e.g. \"src-address,dst-address\"\n    cake_rtt: round-trip time e.g. \"50ms\", \"100ms\"\n    fq_codel_target / fq_codel_interval: time e.g. \"5ms\", \"100ms\"\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"kind": {
+"default": "cake",
+"enum": [
+"cake",
+"fq-codel",
+"sfq",
+"red",
+"pcq",
+"pfifo",
+"bfifo",
+"pfifo-bpf",
+"mq-pfifo",
+"none"
+],
+"title": "Kind",
+"type": "string"
+},
+"cake_flowmode": {
+"anyOf": [
+{
+"enum": [
+"triple-isolate",
+"dual-srchost",
+"dual-dsthost",
+"host",
+"flow",
+"none"
+],
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Flowmode"
+},
+"cake_nat": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Nat"
+},
+"cake_overhead": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Overhead"
+},
+"cake_mpu": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Mpu"
+},
+"cake_diffserv": {
+"anyOf": [
+{
+"enum": [
+"besteffort",
+"diffserv3",
+"diffserv4",
+"diffserv8"
+],
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Diffserv"
+},
+"cake_ack_filter": {
+"anyOf": [
+{
+"enum": [
+"filter",
+"aggressive",
+"none"
+],
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Ack Filter"
+},
+"cake_rtt": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Rtt"
+},
+"cake_wash": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Wash"
+},
+"cake_overhead_scheme": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Overhead Scheme"
+},
+"pcq_rate": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pcq Rate"
+},
+"pcq_limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pcq Limit"
+},
+"pcq_classifier": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pcq Classifier"
+},
+"pfifo_limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pfifo Limit"
+},
+"bfifo_limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Bfifo Limit"
+},
+"sfq_perturb": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Sfq Perturb"
+},
+"sfq_allot": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Sfq Allot"
+},
+"fq_codel_limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Fq Codel Limit"
+},
+"fq_codel_quantum": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Fq Codel Quantum"
+},
+"fq_codel_target": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Fq Codel Target"
+},
+"fq_codel_interval": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Fq Codel Interval"
+},
+"red_limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Red Limit"
+},
+"red_min_threshold": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Red Min Threshold"
+},
+"red_max_threshold": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Red Max Threshold"
+},
+"red_burst": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Red Burst"
+},
+"red_avg_packet": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Red Avg Packet"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_create_queue_typeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_queue_typeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Queue Type",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_queue_types",
+"title": null,
+"description": "Lists queue types on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"kind_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Kind Filter"
+}
+},
+"title": "mikrotik_list_queue_typesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_queue_typesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Queue Types",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_queue_type",
+"title": null,
+"description": "Gets detailed information about a specific queue type.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_queue_typeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_queue_typeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Queue Type",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_queue_type",
+"title": null,
+"description": "Updates an existing queue type's discipline-specific settings.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"new_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "New Name"
+},
+"cake_flowmode": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Flowmode"
+},
+"cake_nat": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Nat"
+},
+"cake_overhead": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Overhead"
+},
+"cake_mpu": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Mpu"
+},
+"cake_diffserv": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Diffserv"
+},
+"cake_ack_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Ack Filter"
+},
+"cake_rtt": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Rtt"
+},
+"cake_wash": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Wash"
+},
+"cake_overhead_scheme": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Cake Overhead Scheme"
+},
+"pcq_rate": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pcq Rate"
+},
+"pcq_limit": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pcq Limit"
+},
+"pcq_classifier": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pcq Classifier"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_update_queue_typeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_queue_typeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update Queue Type",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_queue_type",
+"title": null,
+"description": "Removes a queue type from the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_queue_typeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_queue_typeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove Queue Type",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_queue_tree",
+"title": null,
+"description": "Creates a hierarchical queue tree entry attached to a parent interface or queue.\n\nNotes:\n    max_limit / limit_at / burst_limit / burst_threshold: bandwidth e.g. \"10M\", \"512k\", \"1G\"\n    burst_time: duration e.g. \"8s\"\n    parent: interface name e.g. \"ether1\" or parent queue name\n    priority: 1 (highest) \u2013 8 (lowest)\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"parent": {
+"title": "Parent",
+"type": "string"
+},
+"queue": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Queue"
+},
+"packet_mark": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Packet Mark"
+},
+"max_limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Max Limit"
+},
+"limit_at": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit At"
+},
+"burst_limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Limit"
+},
+"burst_threshold": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Threshold"
+},
+"burst_time": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Time"
+},
+"bucket_size": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Bucket Size"
+},
+"priority": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Priority"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+}
+},
+"required": [
+"name",
+"parent"
+],
+"title": "mikrotik_create_queue_treeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_queue_treeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Queue Tree",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_queue_trees",
+"title": null,
+"description": "Lists queue trees on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"parent_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Parent Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"invalid_only": {
+"default": false,
+"title": "Invalid Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_queue_treesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_queue_treesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Queue Trees",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_queue_tree",
+"title": null,
+"description": "Gets detailed information about a specific queue tree.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_queue_treeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_queue_treeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Queue Tree",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_queue_tree",
+"title": null,
+"description": "Updates an existing queue tree entry (bandwidth limits, parent, priority, etc.).\n\nNotes:\n    max_limit / limit_at / burst_limit / burst_threshold: bandwidth e.g. \"10M\", \"512k\"\n    burst_time: duration e.g. \"8s\"\n    priority: 1 (highest) \u2013 8 (lowest)\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"new_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "New Name"
+},
+"parent": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Parent"
+},
+"queue": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Queue"
+},
+"packet_mark": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Packet Mark"
+},
+"max_limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Max Limit"
+},
+"limit_at": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit At"
+},
+"burst_limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Limit"
+},
+"burst_threshold": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Threshold"
+},
+"burst_time": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Time"
+},
+"bucket_size": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Bucket Size"
+},
+"priority": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Priority"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_update_queue_treeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_queue_treeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update Queue Tree",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_queue_tree",
+"title": null,
+"description": "Removes a queue tree from the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_queue_treeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_queue_treeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove Queue Tree",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_queue_tree",
+"title": null,
+"description": "Enables a queue tree.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_enable_queue_treeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_queue_treeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable Queue Tree",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_queue_tree",
+"title": null,
+"description": "Disables a queue tree.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_disable_queue_treeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_queue_treeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable Queue Tree",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_simple_queue",
+"title": null,
+"description": "Creates a simple queue to rate-limit a target address or interface.\n\nNotes:\n    target: IP/CIDR or interface e.g. \"192.168.1.0/24\" or \"ether1\"\n    max_limit / limit_at / burst_limit / burst_threshold: upload/download bandwidth\n        as \"UL/DL\" e.g. \"10M/10M\", or single value e.g. \"10M\"\n    burst_time: duration e.g. \"8s\"\n    priority: 1 (highest) \u2013 8 (lowest)\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"target": {
+"title": "Target",
+"type": "string"
+},
+"dst": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst"
+},
+"max_limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Max Limit"
+},
+"limit_at": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit At"
+},
+"burst_limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Limit"
+},
+"burst_threshold": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Threshold"
+},
+"burst_time": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Time"
+},
+"bucket_size": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Bucket Size"
+},
+"queue": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Queue"
+},
+"parent": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Parent"
+},
+"priority": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Priority"
+},
+"packet_marks": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Packet Marks"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+}
+},
+"required": [
+"name",
+"target"
+],
+"title": "mikrotik_create_simple_queueArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_simple_queueOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Simple Queue",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_simple_queues",
+"title": null,
+"description": "Lists simple queues on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"target_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Target Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"invalid_only": {
+"default": false,
+"title": "Invalid Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_simple_queuesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_simple_queuesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Simple Queues",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_simple_queue",
+"title": null,
+"description": "Gets detailed information about a specific simple queue.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_simple_queueArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_simple_queueOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Simple Queue",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_simple_queue",
+"title": null,
+"description": "Updates an existing simple queue's rate limits, target, or scheduling settings.\n\nNotes:\n    target: IP/CIDR or interface e.g. \"192.168.1.0/24\" or \"ether1\"\n    max_limit / limit_at / burst_limit / burst_threshold: upload/download bandwidth\n        as \"UL/DL\" e.g. \"10M/10M\", or single value e.g. \"10M\"\n    burst_time: duration e.g. \"8s\"\n    priority: 1 (highest) \u2013 8 (lowest)\n",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"new_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "New Name"
+},
+"target": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Target"
+},
+"dst": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst"
+},
+"max_limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Max Limit"
+},
+"limit_at": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Limit At"
+},
+"burst_limit": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Limit"
+},
+"burst_threshold": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Threshold"
+},
+"burst_time": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Burst Time"
+},
+"bucket_size": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Bucket Size"
+},
+"queue": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Queue"
+},
+"parent": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Parent"
+},
+"priority": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Priority"
+},
+"packet_marks": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Packet Marks"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_update_simple_queueArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_simple_queueOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update Simple Queue",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_simple_queue",
+"title": null,
+"description": "Removes a simple queue from the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_simple_queueArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_simple_queueOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove Simple Queue",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_simple_queue",
+"title": null,
+"description": "Enables a simple queue.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_enable_simple_queueArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_simple_queueOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable Simple Queue",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_simple_queue",
+"title": null,
+"description": "Disables a simple queue.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_disable_simple_queueArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_simple_queueOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable Simple Queue",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "safe_mode_status",
+"title": null,
+"description": "Returns whether MikroTik Safe Mode is currently active.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_safe_mode_statusArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_safe_mode_statusOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Safe Mode Status",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_safe_mode",
+"title": null,
+"description": "Activates MikroTik Safe Mode; changes are held in memory and auto-reverted on disconnect until committed.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_enable_safe_modeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_safe_modeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable Safe Mode",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "commit_safe_mode",
+"title": null,
+"description": "Commits all pending Safe Mode changes to persistent storage and exits Safe Mode.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_commit_safe_modeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_commit_safe_modeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Commit Safe Mode",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "rollback_safe_mode",
+"title": null,
+"description": "Discards all pending Safe Mode changes by closing the SSH session, triggering automatic rollback.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_rollback_safe_modeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_rollback_safe_modeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Rollback Safe Mode",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "add_route",
+"title": null,
+"description": "Adds a route to the routing table.\n\nNotes:\n    dst_address: CIDR e.g. \"0.0.0.0/0\", \"192.168.1.0/24\"\n    check_gateway: \"ping\" or \"arp\"\n    distance: 1-255 (lower = higher priority)\n",
+"inputSchema": {
+"properties": {
+"dst_address": {
+"title": "Dst Address",
+"type": "string"
+},
+"gateway": {
+"title": "Gateway",
+"type": "string"
+},
+"distance": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Distance"
+},
+"scope": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Scope"
+},
+"target_scope": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Target Scope"
+},
+"routing_mark": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Routing Mark"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+},
+"vrf_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Vrf Interface"
+},
+"pref_src": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pref Src"
+},
+"check_gateway": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Check Gateway"
+}
+},
+"required": [
+"dst_address",
+"gateway"
+],
+"title": "mikrotik_add_routeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_add_routeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add Route",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_routes",
+"title": null,
+"description": "Lists routes in MikroTik routing table.",
+"inputSchema": {
+"properties": {
+"dst_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Filter"
+},
+"gateway_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Gateway Filter"
+},
+"routing_mark_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Routing Mark Filter"
+},
+"distance_filter": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Distance Filter"
+},
+"active_only": {
+"default": false,
+"title": "Active Only",
+"type": "boolean"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"dynamic_only": {
+"default": false,
+"title": "Dynamic Only",
+"type": "boolean"
+},
+"static_only": {
+"default": false,
+"title": "Static Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_routesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_routesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Routes",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_route",
+"title": null,
+"description": "Gets detailed information about a specific route.\n\nNotes:\n    route_id: \"*N\" or \"N\" from list output e.g. \"*3\"\n",
+"inputSchema": {
+"properties": {
+"route_id": {
+"title": "Route Id",
+"type": "string"
+}
+},
+"required": [
+"route_id"
+],
+"title": "mikrotik_get_routeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_routeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Route",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_route",
+"title": null,
+"description": "Updates a route.\n\nNotes:\n    route_id: \"*N\" or \"N\" from list output e.g. \"*3\"\n    dst_address: CIDR e.g. \"192.168.1.0/24\"\n    check_gateway: \"ping\" or \"arp\"\n    distance: 1-255\n    Pass \"\" to routing_mark, vrf_interface, or pref_src to clear them.\n",
+"inputSchema": {
+"properties": {
+"route_id": {
+"title": "Route Id",
+"type": "string"
+},
+"dst_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dst Address"
+},
+"gateway": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Gateway"
+},
+"distance": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Distance"
+},
+"scope": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Scope"
+},
+"target_scope": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Target Scope"
+},
+"routing_mark": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Routing Mark"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+},
+"vrf_interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Vrf Interface"
+},
+"pref_src": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Pref Src"
+},
+"check_gateway": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Check Gateway"
+}
+},
+"required": [
+"route_id"
+],
+"title": "mikrotik_update_routeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_routeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update Route",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_route",
+"title": null,
+"description": "Removes a route.\n\nNotes:\n    route_id: \"*N\" or \"N\" from list output e.g. \"*3\"\n",
+"inputSchema": {
+"properties": {
+"route_id": {
+"title": "Route Id",
+"type": "string"
+}
+},
+"required": [
+"route_id"
+],
+"title": "mikrotik_remove_routeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_routeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove Route",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_route",
+"title": null,
+"description": "Enables a route.\n\nNotes:\n    route_id: \"*N\" or \"N\" from list output e.g. \"*3\"\n",
+"inputSchema": {
+"properties": {
+"route_id": {
+"title": "Route Id",
+"type": "string"
+}
+},
+"required": [
+"route_id"
+],
+"title": "mikrotik_enable_routeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_routeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable Route",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_route",
+"title": null,
+"description": "Disables a route.\n\nNotes:\n    route_id: \"*N\" or \"N\" from list output e.g. \"*3\"\n",
+"inputSchema": {
+"properties": {
+"route_id": {
+"title": "Route Id",
+"type": "string"
+}
+},
+"required": [
+"route_id"
+],
+"title": "mikrotik_disable_routeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_routeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable Route",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_routing_table",
+"title": null,
+"description": "Gets a specific routing table.",
+"inputSchema": {
+"properties": {
+"table_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": "main",
+"title": "Table Name"
+},
+"protocol_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Protocol Filter"
+},
+"active_only": {
+"default": true,
+"title": "Active Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_get_routing_tableArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_routing_tableOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Routing Table",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "check_route_path",
+"title": null,
+"description": "Checks the route path to a destination.",
+"inputSchema": {
+"properties": {
+"destination": {
+"title": "Destination",
+"type": "string"
+},
+"source": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Source"
+},
+"routing_mark": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Routing Mark"
+}
+},
+"required": [
+"destination"
+],
+"title": "mikrotik_check_route_pathArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_check_route_pathOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Check Route Path",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_route_cache",
+"title": null,
+"description": "Gets the route cache.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_get_route_cacheArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_route_cacheOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Route Cache",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "flush_route_cache",
+"title": null,
+"description": "Flushes the route cache.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_flush_route_cacheArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_flush_route_cacheOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Flush Route Cache",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "add_default_route",
+"title": null,
+"description": "Adds a default route.",
+"inputSchema": {
+"properties": {
+"gateway": {
+"title": "Gateway",
+"type": "string"
+},
+"distance": {
+"default": 1,
+"title": "Distance",
+"type": "integer"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"check_gateway": {
+"default": "ping",
+"title": "Check Gateway",
+"type": "string"
+}
+},
+"required": [
+"gateway"
+],
+"title": "mikrotik_add_default_routeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_add_default_routeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add Default Route",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "add_blackhole_route",
+"title": null,
+"description": "Adds a blackhole route.\n\nNotes:\n    dst_address: CIDR e.g. \"10.0.0.0/8\"\n    distance: 1-255\n",
+"inputSchema": {
+"properties": {
+"dst_address": {
+"title": "Dst Address",
+"type": "string"
+},
+"distance": {
+"default": 1,
+"title": "Distance",
+"type": "integer"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"required": [
+"dst_address"
+],
+"title": "mikrotik_add_blackhole_routeArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_add_blackhole_routeOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add Blackhole Route",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_route_statistics",
+"title": null,
+"description": "Gets routing table statistics.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_get_route_statisticsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_route_statisticsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Route Statistics",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "add_user",
+"title": null,
+"description": "Adds a user to MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"password": {
+"title": "Password",
+"type": "string"
+},
+"group": {
+"default": "read",
+"title": "Group",
+"type": "string"
+},
+"address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Address"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+}
+},
+"required": [
+"name",
+"password"
+],
+"title": "mikrotik_add_userArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_add_userOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add User",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_users",
+"title": null,
+"description": "Lists users on MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"group_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Group Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"active_only": {
+"default": false,
+"title": "Active Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_usersArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_usersOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Users",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_user",
+"title": null,
+"description": "Gets detailed information about a specific user.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_userArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_userOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get User",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_user",
+"title": null,
+"description": "Updates a user.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"new_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "New Name"
+},
+"password": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Password"
+},
+"group": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Group"
+},
+"address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Address"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_update_userArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_userOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update User",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_user",
+"title": null,
+"description": "Removes a user.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_userArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_userOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove User",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_user",
+"title": null,
+"description": "Disables a user.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_disable_userArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_userOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable User",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_user",
+"title": null,
+"description": "Enables a user.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_enable_userArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_userOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable User",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "add_user_group",
+"title": null,
+"description": "Adds a user group.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"policy": {
+"items": {
+"type": "string"
+},
+"title": "Policy",
+"type": "array"
+},
+"skin": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Skin"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"required": [
+"name",
+"policy"
+],
+"title": "mikrotik_add_user_groupArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_add_user_groupOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add User Group",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_user_groups",
+"title": null,
+"description": "Lists user groups on MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"policy_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Policy Filter"
+}
+},
+"title": "mikrotik_list_user_groupsArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_user_groupsOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List User Groups",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_user_group",
+"title": null,
+"description": "Gets detailed information about a specific user group.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_user_groupArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_user_groupOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get User Group",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_user_group",
+"title": null,
+"description": "Updates a user group.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"new_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "New Name"
+},
+"policy": {
+"anyOf": [
+{
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Policy"
+},
+"skin": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Skin"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_update_user_groupArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_user_groupOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update User Group",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_user_group",
+"title": null,
+"description": "Removes a user group.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_user_groupArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_user_groupOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove User Group",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_active_users",
+"title": null,
+"description": "Gets currently active/logged-in users.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_get_active_usersArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_active_usersOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Active Users",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disconnect_user",
+"title": null,
+"description": "Disconnects an active user session.",
+"inputSchema": {
+"properties": {
+"user_id": {
+"title": "User Id",
+"type": "string"
+}
+},
+"required": [
+"user_id"
+],
+"title": "mikrotik_disconnect_userArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disconnect_userOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disconnect User",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "export_user_config",
+"title": null,
+"description": "Exports user configuration to a file.",
+"inputSchema": {
+"properties": {
+"filename": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Filename"
+}
+},
+"title": "mikrotik_export_user_configArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_export_user_configOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Export User Config",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "set_user_ssh_keys",
+"title": null,
+"description": "Sets SSH keys for a specific user.",
+"inputSchema": {
+"properties": {
+"username": {
+"title": "Username",
+"type": "string"
+},
+"key_file": {
+"title": "Key File",
+"type": "string"
+}
+},
+"required": [
+"username",
+"key_file"
+],
+"title": "mikrotik_set_user_ssh_keysArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_set_user_ssh_keysOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Set User SSH Keys",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_user_ssh_keys",
+"title": null,
+"description": "Lists SSH keys for a specific user.",
+"inputSchema": {
+"properties": {
+"username": {
+"title": "Username",
+"type": "string"
+}
+},
+"required": [
+"username"
+],
+"title": "mikrotik_list_user_ssh_keysArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_user_ssh_keysOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List User SSH Keys",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_user_ssh_key",
+"title": null,
+"description": "Removes an SSH key.",
+"inputSchema": {
+"properties": {
+"key_id": {
+"title": "Key Id",
+"type": "string"
+}
+},
+"required": [
+"key_id"
+],
+"title": "mikrotik_remove_user_ssh_keyArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_user_ssh_keyOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove User SSH Key",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_vlan_interface",
+"title": null,
+"description": "Creates a VLAN interface on the MikroTik device with the given VLAN ID and parent interface.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"vlan_id": {
+"maximum": 4094,
+"minimum": 1,
+"title": "Vlan Id",
+"type": "integer"
+},
+"interface": {
+"title": "Interface",
+"type": "string"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+},
+"mtu": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mtu"
+},
+"use_service_tag": {
+"default": false,
+"title": "Use Service Tag",
+"type": "boolean"
+},
+"arp": {
+"default": "enabled",
+"enum": [
+"enabled",
+"disabled",
+"proxy-arp",
+"reply-only"
+],
+"title": "Arp",
+"type": "string"
+},
+"arp_timeout": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Arp Timeout"
+}
+},
+"required": [
+"name",
+"vlan_id",
+"interface"
+],
+"title": "mikrotik_create_vlan_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_vlan_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create VLAN",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_vlan_interfaces",
+"title": null,
+"description": "Lists VLAN interfaces on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"vlan_id_filter": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Vlan Id Filter"
+},
+"interface_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Interface Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_vlan_interfacesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_vlan_interfacesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List VLANs",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_vlan_interface",
+"title": null,
+"description": "Gets detailed information about a specific VLAN interface.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_vlan_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_vlan_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get VLAN",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_vlan_interface",
+"title": null,
+"description": "Updates an existing VLAN interface's settings on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"new_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "New Name"
+},
+"vlan_id": {
+"anyOf": [
+{
+"maximum": 4094,
+"minimum": 1,
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Vlan Id"
+},
+"interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Interface"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+},
+"mtu": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mtu"
+},
+"use_service_tag": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Use Service Tag"
+},
+"arp": {
+"anyOf": [
+{
+"enum": [
+"enabled",
+"disabled",
+"proxy-arp",
+"reply-only"
+],
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Arp"
+},
+"arp_timeout": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Arp Timeout"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_update_vlan_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_vlan_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update VLAN",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_vlan_interface",
+"title": null,
+"description": "Removes a VLAN interface from the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_vlan_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_vlan_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove VLAN",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_wireless_interface",
+"title": null,
+"description": "Creates a wireless interface on the MikroTik device (auto-detects RouterOS v6/v7 syntax).",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"ssid": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Ssid"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"radio_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Radio Name"
+},
+"mode": {
+"anyOf": [
+{
+"enum": [
+"ap-bridge",
+"bridge",
+"station",
+"station-pseudobridge",
+"station-bridge",
+"station-wds",
+"ap-bridge-wds",
+"alignment-only"
+],
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mode"
+},
+"frequency": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Frequency"
+},
+"band": {
+"anyOf": [
+{
+"enum": [
+"2ghz-b",
+"2ghz-b/g",
+"2ghz-b/g/n",
+"5ghz-a",
+"5ghz-a/n",
+"5ghz-a/n/ac",
+"2ghz-g",
+"2ghz-n",
+"5ghz-n",
+"5ghz-ac"
+],
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Band"
+},
+"channel_width": {
+"anyOf": [
+{
+"enum": [
+"20mhz",
+"40mhz",
+"80mhz",
+"160mhz",
+"20/40mhz-eC",
+"20/40mhz-Ce"
+],
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Channel Width"
+},
+"security_profile": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Security Profile"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_create_wireless_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_wireless_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Wireless Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_wireless_interfaces",
+"title": null,
+"description": "Lists wireless interfaces on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"running_only": {
+"default": false,
+"title": "Running Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_wireless_interfacesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_wireless_interfacesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Wireless Interfaces",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_wireless_interface",
+"title": null,
+"description": "Gets detailed information about a specific wireless interface.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_wireless_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_wireless_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Wireless Interface",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_wireless_interface",
+"title": null,
+"description": "Removes a wireless interface from the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_wireless_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_wireless_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove Wireless Interface",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_wireless_interface",
+"title": null,
+"description": "Enables a wireless interface.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_enable_wireless_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_wireless_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable Wireless Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_wireless_interface",
+"title": null,
+"description": "Disables a wireless interface.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_disable_wireless_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_wireless_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable Wireless Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "scan_wireless_networks",
+"title": null,
+"description": "Scans for nearby wireless networks using the specified interface.",
+"inputSchema": {
+"properties": {
+"interface": {
+"title": "Interface",
+"type": "string"
+},
+"duration": {
+"default": 5,
+"title": "Duration",
+"type": "integer"
+}
+},
+"required": [
+"interface"
+],
+"title": "mikrotik_scan_wireless_networksArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_scan_wireless_networksOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Scan Wireless Networks",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_wireless_registration_table",
+"title": null,
+"description": "Gets the wireless registration table (connected clients) from the MikroTik device.",
+"inputSchema": {
+"properties": {
+"interface": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Interface"
+}
+},
+"title": "mikrotik_get_wireless_registration_tableArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_wireless_registration_tableOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Wireless Registration Table",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "check_wireless_support",
+"title": null,
+"description": "Checks if the device supports wireless and reports the RouterOS version and wireless interface type.",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_check_wireless_supportArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_check_wireless_supportOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Check Wireless Support",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_wireless_security_profile",
+"title": null,
+"description": "Legacy function - not supported in RouterOS v7.x",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_create_wireless_security_profileArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_wireless_security_profileOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Wireless Security Profile",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_wireless_security_profiles",
+"title": null,
+"description": "Legacy function - not supported in RouterOS v7.x",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_list_wireless_security_profilesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_wireless_security_profilesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Wireless Security Profiles",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_wireless_security_profile",
+"title": null,
+"description": "Legacy function - not supported in RouterOS v7.x",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_wireless_security_profileArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_wireless_security_profileOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get Wireless Security Profile",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_wireless_security_profile",
+"title": null,
+"description": "Legacy function - not supported in RouterOS v7.x",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_wireless_security_profileArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_wireless_security_profileOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove Wireless Security Profile",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "set_wireless_security_profile",
+"title": null,
+"description": "Legacy function - not supported in RouterOS v7.x",
+"inputSchema": {
+"properties": {
+"interface_name": {
+"title": "Interface Name",
+"type": "string"
+},
+"security_profile": {
+"title": "Security Profile",
+"type": "string"
+}
+},
+"required": [
+"interface_name",
+"security_profile"
+],
+"title": "mikrotik_set_wireless_security_profileArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_set_wireless_security_profileOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Set Wireless Security Profile",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_wireless_access_list",
+"title": null,
+"description": "Legacy function - different in RouterOS v7.x",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_create_wireless_access_listArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_wireless_access_listOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create Wireless Access List",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_wireless_access_list",
+"title": null,
+"description": "Legacy function - different in RouterOS v7.x",
+"inputSchema": {
+"properties": {},
+"title": "mikrotik_list_wireless_access_listArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_wireless_access_listOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List Wireless Access List",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_wireless_access_list_entry",
+"title": null,
+"description": "Legacy function - different in RouterOS v7.x",
+"inputSchema": {
+"properties": {
+"entry_id": {
+"title": "Entry Id",
+"type": "string"
+}
+},
+"required": [
+"entry_id"
+],
+"title": "mikrotik_remove_wireless_access_list_entryArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_wireless_access_list_entryOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove Wireless Access List Entry",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_wireless_interface",
+"title": null,
+"description": "Updates an existing wireless interface's settings (name, SSID, enabled state, etc.).",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"new_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "New Name"
+},
+"ssid": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Ssid"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_update_wireless_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_wireless_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update Wireless Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "create_wireguard_interface",
+"title": null,
+"description": "Creates a WireGuard interface on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"listen_port": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Listen Port"
+},
+"private_key": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Private Key"
+},
+"mtu": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mtu"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_create_wireguard_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_create_wireguard_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Create WireGuard Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_wireguard_interfaces",
+"title": null,
+"description": "Lists WireGuard interfaces on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Name Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+},
+"running_only": {
+"default": false,
+"title": "Running Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_wireguard_interfacesArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_wireguard_interfacesOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List WireGuard Interfaces",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_wireguard_interface",
+"title": null,
+"description": "Gets detailed information about a specific WireGuard interface.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_get_wireguard_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_wireguard_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get WireGuard Interface",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_wireguard_interface",
+"title": null,
+"description": "Updates an existing WireGuard interface's settings on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+},
+"new_name": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "New Name"
+},
+"listen_port": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Listen Port"
+},
+"private_key": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Private Key"
+},
+"mtu": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Mtu"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_update_wireguard_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_wireguard_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update WireGuard Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_wireguard_interface",
+"title": null,
+"description": "Removes a WireGuard interface from the MikroTik device.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_remove_wireguard_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_wireguard_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove WireGuard Interface",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_wireguard_interface",
+"title": null,
+"description": "Enables a WireGuard interface.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_enable_wireguard_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_wireguard_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable WireGuard Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_wireguard_interface",
+"title": null,
+"description": "Disables a WireGuard interface.",
+"inputSchema": {
+"properties": {
+"name": {
+"title": "Name",
+"type": "string"
+}
+},
+"required": [
+"name"
+],
+"title": "mikrotik_disable_wireguard_interfaceArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_wireguard_interfaceOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable WireGuard Interface",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "add_wireguard_peer",
+"title": null,
+"description": "Adds a WireGuard peer (with public key and allowed addresses) to an interface on the MikroTik device.\n\nNotes:\n    allowed_address: CIDR, comma-separated for multiple e.g. \"10.0.0.2/32\" or \"10.0.0.0/24,192.168.0.0/24\"\n    endpoint_address: remote host IP or hostname e.g. \"203.0.113.1\"\n    persistent_keepalive: seconds as string e.g. \"25\"\n",
+"inputSchema": {
+"properties": {
+"interface": {
+"title": "Interface",
+"type": "string"
+},
+"public_key": {
+"title": "Public Key",
+"type": "string"
+},
+"allowed_address": {
+"title": "Allowed Address",
+"type": "string"
+},
+"endpoint_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Endpoint Address"
+},
+"endpoint_port": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Endpoint Port"
+},
+"preshared_key": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Preshared Key"
+},
+"persistent_keepalive": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Persistent Keepalive"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"default": false,
+"title": "Disabled",
+"type": "boolean"
+}
+},
+"required": [
+"interface",
+"public_key",
+"allowed_address"
+],
+"title": "mikrotik_add_wireguard_peerArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_add_wireguard_peerOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Add WireGuard Peer",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": null,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "list_wireguard_peers",
+"title": null,
+"description": "Lists WireGuard peers on the MikroTik device.",
+"inputSchema": {
+"properties": {
+"interface_filter": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Interface Filter"
+},
+"disabled_only": {
+"default": false,
+"title": "Disabled Only",
+"type": "boolean"
+}
+},
+"title": "mikrotik_list_wireguard_peersArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_list_wireguard_peersOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "List WireGuard Peers",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "get_wireguard_peer",
+"title": null,
+"description": "Gets detailed information about a specific WireGuard peer by ID.\n\nNotes:\n    peer_id: \"*N\" or \"N\" from list output e.g. \"*2\"\n",
+"inputSchema": {
+"properties": {
+"peer_id": {
+"title": "Peer Id",
+"type": "string"
+}
+},
+"required": [
+"peer_id"
+],
+"title": "mikrotik_get_wireguard_peerArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_get_wireguard_peerOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Get WireGuard Peer",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "update_wireguard_peer",
+"title": null,
+"description": "Updates an existing WireGuard peer's allowed addresses, endpoint, keepalive, or enabled state.\n\nNotes:\n    peer_id: \"*N\" or \"N\" from list output e.g. \"*2\"\n    allowed_address: CIDR, comma-separated e.g. \"10.0.0.2/32\" or \"10.0.0.0/24,192.168.0.0/24\"\n    persistent_keepalive: seconds as string e.g. \"25\"\n    Pass \"\" for endpoint_address or preshared_key to clear them.\n",
+"inputSchema": {
+"properties": {
+"peer_id": {
+"title": "Peer Id",
+"type": "string"
+},
+"allowed_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Allowed Address"
+},
+"endpoint_address": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Endpoint Address"
+},
+"endpoint_port": {
+"anyOf": [
+{
+"type": "integer"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Endpoint Port"
+},
+"preshared_key": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Preshared Key"
+},
+"persistent_keepalive": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Persistent Keepalive"
+},
+"comment": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Comment"
+},
+"disabled": {
+"anyOf": [
+{
+"type": "boolean"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Disabled"
+}
+},
+"required": [
+"peer_id"
+],
+"title": "mikrotik_update_wireguard_peerArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_update_wireguard_peerOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Update WireGuard Peer",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "remove_wireguard_peer",
+"title": null,
+"description": "Removes a WireGuard peer from the MikroTik device.\n\nNotes:\n    peer_id: \"*N\" or \"N\" from list output e.g. \"*2\"\n",
+"inputSchema": {
+"properties": {
+"peer_id": {
+"title": "Peer Id",
+"type": "string"
+}
+},
+"required": [
+"peer_id"
+],
+"title": "mikrotik_remove_wireguard_peerArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_remove_wireguard_peerOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Remove WireGuard Peer",
+"readOnlyHint": null,
+"destructiveHint": true,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "enable_wireguard_peer",
+"title": null,
+"description": "Enables a WireGuard peer.\n\nNotes:\n    peer_id: \"*N\" or \"N\" from list output e.g. \"*2\"\n",
+"inputSchema": {
+"properties": {
+"peer_id": {
+"title": "Peer Id",
+"type": "string"
+}
+},
+"required": [
+"peer_id"
+],
+"title": "mikrotik_enable_wireguard_peerArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_enable_wireguard_peerOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Enable WireGuard Peer",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "disable_wireguard_peer",
+"title": null,
+"description": "Disables a WireGuard peer.\n\nNotes:\n    peer_id: \"*N\" or \"N\" from list output e.g. \"*2\"\n",
+"inputSchema": {
+"properties": {
+"peer_id": {
+"title": "Peer Id",
+"type": "string"
+}
+},
+"required": [
+"peer_id"
+],
+"title": "mikrotik_disable_wireguard_peerArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_disable_wireguard_peerOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Disable WireGuard Peer",
+"readOnlyHint": null,
+"destructiveHint": false,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+},
+{
+"name": "generate_wireguard_client_config",
+"title": null,
+"description": "Generates a wg0.conf client config string from the given keys and server endpoint. Does not communicate with the router.",
+"inputSchema": {
+"properties": {
+"client_private_key": {
+"title": "Client Private Key",
+"type": "string"
+},
+"client_address": {
+"title": "Client Address",
+"type": "string"
+},
+"server_public_key": {
+"title": "Server Public Key",
+"type": "string"
+},
+"server_endpoint": {
+"title": "Server Endpoint",
+"type": "string"
+},
+"server_port": {
+"default": 51820,
+"title": "Server Port",
+"type": "integer"
+},
+"allowed_ips": {
+"default": "0.0.0.0/0",
+"title": "Allowed Ips",
+"type": "string"
+},
+"dns": {
+"anyOf": [
+{
+"type": "string"
+},
+{
+"type": "null"
+}
+],
+"default": null,
+"title": "Dns"
+},
+"persistent_keepalive": {
+"default": 25,
+"title": "Persistent Keepalive",
+"type": "integer"
+}
+},
+"required": [
+"client_private_key",
+"client_address",
+"server_public_key",
+"server_endpoint"
+],
+"title": "mikrotik_generate_wireguard_client_configArguments",
+"type": "object"
+},
+"outputSchema": {
+"properties": {
+"result": {
+"title": "Result",
+"type": "string"
+}
+},
+"required": [
+"result"
+],
+"title": "mikrotik_generate_wireguard_client_configOutput",
+"type": "object"
+},
+"icons": null,
+"annotations": {
+"title": "Generate WireGuard Client Config",
+"readOnlyHint": true,
+"destructiveHint": null,
+"idempotentHint": true,
+"openWorldHint": false
+},
+"meta": null,
+"execution": null
+}
+]

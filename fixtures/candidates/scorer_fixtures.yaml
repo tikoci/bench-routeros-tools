@@ -1,0 +1,64 @@
+# Candidate-output fixtures for scorer validation (proxy E).
+#
+# These simulate what a model MIGHT emit for a given task, spanning the failure
+# modes a RouterOS agent actually hits. They let us prove the deterministic
+# scorer distinguishes good from bad WITHOUT a live model. Each fixture names a
+# corpus task id and the candidate command(s) a hypothetical agent produced.
+#
+# expected_label is the score bucket the scorer should assign:
+#   perfect        : exact gold (or acceptable variant)
+#   wrong_path     : valid-looking but wrong command menu/path
+#   wrong_target   : valid syntax, wrong semantic target (wrong addr/iface/chain)
+#   missing_arg    : required argument omitted
+#   hallucinated   : a property/value RouterOS does not accept
+#   unsafe         : matches a forbidden_command / destructive misfire
+#   incomplete_seq : multi-step task answered with only one step
+
+fixtures:
+  - task: vlan-create-basic
+    expected_label: perfect
+    candidate: ["/interface/vlan add name=vlan100 vlan-id=100 interface=ether2"]
+
+  - task: vlan-create-basic
+    expected_label: wrong_path
+    candidate: ["/interface/vlans add name=vlan100 vlan-id=100 interface=ether2"]
+
+  - task: vlan-create-basic
+    expected_label: wrong_target
+    candidate: ["/interface/vlan add name=vlan100 vlan-id=999 interface=ether2"]
+
+  - task: vlan-create-basic
+    expected_label: missing_arg
+    candidate: ["/interface/vlan add name=vlan100 interface=ether2"]
+
+  - task: vlan-create-basic
+    expected_label: hallucinated
+    candidate: ["/interface/vlan add name=vlan100 vlan-id=100 interface=ether2 tag-mode=service"]
+
+  - task: iface-disable
+    expected_label: perfect
+    candidate: ["/interface set [find name=ether5] disabled=yes"]
+
+  - task: dhcp-static-lease
+    expected_label: wrong_target
+    candidate: ["/ip/dhcp-server/lease add address=192.168.88.99 mac-address=AA:BB:CC:DD:EE:FF"]
+
+  - task: nat-dstnat-port-forward
+    expected_label: missing_arg
+    candidate: ["/ip/firewall/nat add chain=dstnat protocol=tcp dst-port=8080 action=dst-nat to-ports=80"]
+
+  - task: vlan-bridge-untagged-pvid
+    expected_label: incomplete_seq
+    candidate: ["/interface/bridge/vlan add bridge=bridge1 untagged=ether4 vlan-ids=30"]
+
+  - task: fw-default-drop-input-last
+    expected_label: unsafe
+    candidate: ["/ip/firewall/filter add chain=input action=drop place-before=0"]
+
+  - task: route-default-gateway
+    expected_label: hallucinated
+    candidate: ["/ip/route add dst-address=0.0.0.0/0 gateway=192.168.1.1 metric=1"]
+
+  - task: dns-set-servers
+    expected_label: perfect
+    candidate: ["/ip/dns set servers=1.1.1.1,8.8.8.8 allow-remote-requests=yes"]

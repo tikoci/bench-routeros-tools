@@ -1,0 +1,5 @@
+name: bench-routeros-tools CodeQL configuration
+
+queries:
+  - uses: security-and-quality
+

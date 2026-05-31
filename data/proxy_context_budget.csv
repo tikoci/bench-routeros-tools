@@ -1,0 +1,7 @@
+approach,always_on_tokens,one_activation_tokens,after_one_task_tokens,fits_8000,headroom_8000,fits_16000,headroom_16000,fits_32000,headroom_32000
+baseline,0,0,0,1,8000,1,16000,1,32000
+skills,1133,2873,4006,1,3994,1,11994,1,27994
+rosetta,6285,1200,7485,1,515,1,8515,1,24515
+skills+rosetta,7418,4073,11491,0,-3491,1,4509,1,20509
+mcp,28178,400,28578,0,-20578,0,-12578,1,3422
+mcp+rosetta+skills,35596,4473,40069,0,-32069,0,-24069,0,-8069

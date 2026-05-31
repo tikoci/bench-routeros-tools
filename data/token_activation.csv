@@ -1,0 +1,13 @@
+source,item,activation_tokens,encoding
+skill_body,routeros-app-yaml,2541,o200k_base
+skill_body,routeros-command-tree,2940,o200k_base
+skill_body,routeros-container,3243,o200k_base
+skill_body,routeros-firewall,1781,o200k_base
+skill_body,routeros-fundamentals,2002,o200k_base
+skill_body,routeros-hotspot,2312,o200k_base
+skill_body,routeros-mac-telnet,5452,o200k_base
+skill_body,routeros-mndp,3479,o200k_base
+skill_body,routeros-netinstall,2168,o200k_base
+skill_body,routeros-qemu-chr,4097,o200k_base
+skill_body,routeros-scripting,1777,o200k_base
+skill_body,routeros-sniffer,2687,o200k_base

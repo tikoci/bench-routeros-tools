@@ -1,0 +1,6 @@
+transition,component_added,marginal_always_on_tokens,encoding
+baseline -> skills,skills_frontmatter,1133,o200k_base
+baseline -> rosetta,rosetta_tools,6285,o200k_base
+baseline -> mcp,mcp_tools,28178,o200k_base
+rosetta -> rosetta+skills,skills_frontmatter,1133,o200k_base
+mcp -> mcp+rosetta+skills,rosetta_tools+skills_frontmatter,7418,o200k_base

@@ -1,0 +1,7 @@
+approach,label,tier,always_on_sources,mcp_tools_tokens,rosetta_tools_tokens,skills_frontmatter_tokens,always_on_total_tokens,encoding
+baseline,Training only,knowledge,(none),0,0,0,0,o200k_base
+skills,routeros-skills only,knowledge,skills_frontmatter,0,0,1133,1133,o200k_base
+rosetta,rosetta only,knowledge,rosetta_tools,0,6285,0,6285,o200k_base
+skills+rosetta,routeros-skills + rosetta,knowledge,skills_frontmatter|rosetta_tools,0,6285,1133,7418,o200k_base
+mcp,mikrotik-mcp only,execution,mcp_tools,28178,0,0,28178,o200k_base
+mcp+rosetta+skills,mikrotik-mcp + rosetta + routeros-skills,execution,mcp_tools|rosetta_tools|skills_frontmatter,28178,6285,1133,35596,o200k_base

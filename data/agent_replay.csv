@@ -1,0 +1,13 @@
+task,expected_label,predicted_label,correct,missing_keys,extra_keys
+vlan-create-basic,perfect,perfect,1,,
+vlan-create-basic,wrong_path,wrong_path,1,,
+vlan-create-basic,wrong_target,wrong_target,1,,
+vlan-create-basic,missing_arg,missing_arg,1,vlan-id,
+vlan-create-basic,hallucinated,hallucinated,1,,tag-mode
+iface-disable,perfect,perfect,1,,disabled
+dhcp-static-lease,wrong_target,wrong_target,1,,
+nat-dstnat-port-forward,missing_arg,missing_arg,1,to-addresses,
+vlan-bridge-untagged-pvid,incomplete_seq,incomplete_seq,1,,
+fw-default-drop-input-last,unsafe,unsafe,1,,
+route-default-gateway,hallucinated,hallucinated,1,,metric
+dns-set-servers,perfect,perfect,1,,

@@ -1,0 +1,7 @@
+# Benchmark harness dependencies.
+# Recommended setup:
+#   python3 -m venv .venv
+#   .venv/bin/pip install -e .
+tiktoken>=0.7.0
+pyyaml>=6.0
+requests>=2.31.0

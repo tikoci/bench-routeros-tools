@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-05-31T14:49:00Z",
+  "chr": {
+    "image": "~/GitHub/chr-armed/Machines/chr-7.22.1-x86.img",
+    "routeros_version": "7.22.1"
+  },
+  "mikrotik_mcp": {
+    "source_path": "/Users/amm0/Lab/mikrotik-mcp",
+    "tool_count": 166
+  },
+  "rosetta": {
+    "source_path": "/Users/amm0/GitHub/rosetta/bin/rosetta.js",
+    "tool_count": 14
+  },
+  "routeros_skills": {
+    "skill_count": 12,
+    "source_path": "/Users/amm0/GitHub/routeros-skills"
+  }
+}

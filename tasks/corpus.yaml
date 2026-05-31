@@ -1,0 +1,537 @@
+# RouterOS agent-support benchmark task corpus
+#
+# Scope: RouterOS 7.22.1 (matches the CHR image used by the validator).
+# Each task is a natural-language intent paired with canonical "gold" command(s).
+#
+# Fields:
+#   id                 stable kebab id
+#   domain             coarse area (used for grouping + tool-ambiguity terms)
+#   intent             natural-language request an agent would receive
+#   version            stable-v7 | 7.21+ | 7.22+   (staleness sensitivity)
+#   state_dependency   stateless | needs-config | needs-verify | mutation
+#                        stateless   : solvable from docs alone
+#                        needs-config: requires reading current device config
+#                        needs-verify: requires post-change verification
+#                        mutation    : changes device state
+#   safety_class       read-only | validation | writes-config | destructive
+#   relevant_areas     command-path-ish tags; used by retrieval + ambiguity proxies
+#   gold_commands      canonical RouterOS CLI command(s), in order
+#   acceptable_variants  optional equivalent forms (regex-free, exact alt strings)
+#   forbidden_commands   commands that would be wrong/unsafe for this intent
+#   expected_validation  ok | error   (what /console/inspect should say about gold)
+
+version_scope: "7.22.1"
+
+tasks:
+  # ---------------- VLAN ----------------
+  - id: vlan-create-basic
+    domain: vlan
+    intent: "Create VLAN 100 named vlan100 on ether2."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/interface/vlan", "vlan-id", "interface"]
+    gold_commands:
+      - "/interface/vlan add name=vlan100 vlan-id=100 interface=ether2"
+    expected_validation: ok
+
+  - id: vlan-bridge-tagged
+    domain: bridge-vlan
+    intent: "On bridge1, tag VLAN 20 on ether3 (egress tagged)."
+    version: stable-v7
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/interface/bridge/vlan", "tagged", "vlan-ids", "bridge"]
+    gold_commands:
+      - "/interface/bridge/vlan add bridge=bridge1 tagged=ether3 vlan-ids=20"
+    expected_validation: ok
+
+  - id: vlan-bridge-untagged-pvid
+    domain: bridge-vlan
+    intent: "Set access VLAN 30 on ether4: untagged member and pvid 30."
+    version: stable-v7
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/interface/bridge/vlan", "untagged", "pvid", "/interface/bridge/port"]
+    gold_commands:
+      - "/interface/bridge/vlan add bridge=bridge1 untagged=ether4 vlan-ids=30"
+      - "/interface/bridge/port set [find interface=ether4] pvid=30"
+    expected_validation: ok
+
+  - id: vlan-enable-bridge-vlan-filtering
+    domain: bridge-vlan
+    intent: "Turn on VLAN filtering on bridge1."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/interface/bridge", "vlan-filtering"]
+    gold_commands:
+      - "/interface/bridge set [find name=bridge1] vlan-filtering=yes"
+    expected_validation: ok
+
+  # ---------------- Firewall ----------------
+  - id: fw-allow-established-related
+    domain: firewall
+    intent: "Add an input rule accepting established and related connections."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/firewall/filter", "chain=input", "connection-state"]
+    gold_commands:
+      - "/ip/firewall/filter add chain=input connection-state=established,related action=accept"
+    expected_validation: ok
+
+  - id: fw-drop-invalid
+    domain: firewall
+    intent: "Drop invalid connections on the input chain."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/firewall/filter", "chain=input", "connection-state=invalid"]
+    gold_commands:
+      - "/ip/firewall/filter add chain=input connection-state=invalid action=drop"
+    expected_validation: ok
+
+  - id: fw-allow-wireguard-peer
+    domain: firewall
+    intent: "Allow inbound WireGuard on udp/13231 to the router."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/firewall/filter", "chain=input", "protocol=udp", "dst-port"]
+    gold_commands:
+      - "/ip/firewall/filter add chain=input protocol=udp dst-port=13231 action=accept"
+    expected_validation: ok
+
+  - id: fw-block-port-forward-order
+    domain: firewall
+    intent: "Add a forward rule (placed first) accepting tcp/443 to 192.168.88.10."
+    version: stable-v7
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/ip/firewall/filter", "chain=forward", "place-before", "dst-address"]
+    gold_commands:
+      - "/ip/firewall/filter add chain=forward protocol=tcp dst-address=192.168.88.10 dst-port=443 action=accept place-before=0"
+    expected_validation: ok
+
+  - id: nat-masquerade-out
+    domain: nat
+    intent: "Masquerade traffic leaving ether1."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/firewall/nat", "chain=srcnat", "action=masquerade", "out-interface"]
+    gold_commands:
+      - "/ip/firewall/nat add chain=srcnat out-interface=ether1 action=masquerade"
+    expected_validation: ok
+
+  - id: nat-dstnat-port-forward
+    domain: nat
+    intent: "Port-forward external tcp/8080 to 192.168.88.20:80."
+    version: stable-v7
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/ip/firewall/nat", "chain=dstnat", "action=dst-nat", "to-addresses", "to-ports"]
+    gold_commands:
+      - "/ip/firewall/nat add chain=dstnat protocol=tcp dst-port=8080 action=dst-nat to-addresses=192.168.88.20 to-ports=80"
+    expected_validation: ok
+
+  - id: fw-addresslist-add
+    domain: firewall
+    intent: "Add 10.0.0.0/8 to an address list named rfc1918."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/firewall/address-list", "list", "address"]
+    gold_commands:
+      - "/ip/firewall/address-list add list=rfc1918 address=10.0.0.0/8"
+    expected_validation: ok
+
+  # ---------------- DHCP ----------------
+  - id: dhcp-server-pool
+    domain: dhcp
+    intent: "Create a DHCP pool dhcp_pool0 covering 192.168.88.10-192.168.88.254."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/pool", "ranges"]
+    gold_commands:
+      - "/ip/pool add name=dhcp_pool0 ranges=192.168.88.10-192.168.88.254"
+    expected_validation: ok
+
+  - id: dhcp-server-on-bridge
+    domain: dhcp
+    intent: "Create a DHCP server named dhcp1 on bridge1 using pool dhcp_pool0."
+    version: stable-v7
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/ip/dhcp-server", "interface", "address-pool"]
+    gold_commands:
+      - "/ip/dhcp-server add name=dhcp1 interface=bridge1 address-pool=dhcp_pool0 disabled=no"
+    expected_validation: ok
+
+  - id: dhcp-network-gateway-dns
+    domain: dhcp
+    intent: "Add a DHCP network 192.168.88.0/24 with gateway 192.168.88.1 and DNS 1.1.1.1."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/dhcp-server/network", "gateway", "dns-server"]
+    gold_commands:
+      - "/ip/dhcp-server/network add address=192.168.88.0/24 gateway=192.168.88.1 dns-server=1.1.1.1"
+    expected_validation: ok
+
+  - id: dhcp-static-lease
+    domain: dhcp
+    intent: "Make a static DHCP lease binding 192.168.88.50 to MAC AA:BB:CC:DD:EE:FF."
+    version: stable-v7
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/ip/dhcp-server/lease", "address", "mac-address"]
+    gold_commands:
+      - "/ip/dhcp-server/lease add address=192.168.88.50 mac-address=AA:BB:CC:DD:EE:FF"
+    expected_validation: ok
+
+  # ---------------- DNS ----------------
+  - id: dns-set-servers
+    domain: dns
+    intent: "Set the router DNS servers to 1.1.1.1 and 8.8.8.8 and allow remote requests."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/ip/dns", "servers", "allow-remote-requests"]
+    gold_commands:
+      - "/ip/dns set servers=1.1.1.1,8.8.8.8 allow-remote-requests=yes"
+    expected_validation: ok
+
+  - id: dns-static-record
+    domain: dns
+    intent: "Add a static DNS A record router.lan -> 192.168.88.1."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/dns/static", "name", "address"]
+    gold_commands:
+      - "/ip/dns/static add name=router.lan address=192.168.88.1"
+    expected_validation: ok
+
+  # ---------------- IP addressing / routes ----------------
+  - id: ipaddr-assign
+    domain: ip-address
+    intent: "Assign 192.168.88.1/24 to bridge1."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/ip/address", "address", "interface"]
+    gold_commands:
+      - "/ip/address add address=192.168.88.1/24 interface=bridge1"
+    expected_validation: ok
+
+  - id: route-default-gateway
+    domain: routes
+    intent: "Add a default route via 192.168.1.1."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/route", "dst-address=0.0.0.0/0", "gateway"]
+    gold_commands:
+      - "/ip/route add dst-address=0.0.0.0/0 gateway=192.168.1.1"
+    expected_validation: ok
+
+  - id: route-static-with-distance
+    domain: routes
+    intent: "Add a backup default route via 192.168.2.1 with distance 2."
+    version: stable-v7
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/ip/route", "gateway", "distance"]
+    gold_commands:
+      - "/ip/route add dst-address=0.0.0.0/0 gateway=192.168.2.1 distance=2"
+    expected_validation: ok
+
+  - id: route-blackhole
+    domain: routes
+    intent: "Blackhole the 10.10.10.0/24 network."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/route", "blackhole", "type"]
+    gold_commands:
+      - "/ip/route add dst-address=10.10.10.0/24 blackhole=yes"
+    expected_validation: ok
+
+  # ---------------- WireGuard ----------------
+  - id: wg-create-interface
+    domain: wireguard
+    intent: "Create a WireGuard interface wg0 listening on udp/13231."
+    version: 7.21+
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/interface/wireguard", "listen-port", "name"]
+    gold_commands:
+      - "/interface/wireguard add name=wg0 listen-port=13231"
+    expected_validation: ok
+
+  - id: wg-assign-address
+    domain: wireguard
+    intent: "Give wg0 the address 10.10.0.1/24."
+    version: 7.21+
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/ip/address", "interface=wg0"]
+    gold_commands:
+      - "/ip/address add address=10.10.0.1/24 interface=wg0"
+    expected_validation: ok
+
+  - id: wg-add-peer
+    domain: wireguard
+    intent: "Add a WireGuard peer on wg0 with allowed-address 10.10.0.2/32 and a given public key."
+    version: 7.21+
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/interface/wireguard/peers", "public-key", "allowed-address", "interface"]
+    gold_commands:
+      - "/interface/wireguard/peers add interface=wg0 public-key=\"REPLACE_PUBKEY=\" allowed-address=10.10.0.2/32"
+    expected_validation: ok
+
+  # ---------------- Interfaces ----------------
+  - id: iface-create-bridge
+    domain: interfaces
+    intent: "Create a bridge named bridge1."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/interface/bridge", "name"]
+    gold_commands:
+      - "/interface/bridge add name=bridge1"
+    expected_validation: ok
+
+  - id: iface-add-bridge-port
+    domain: interfaces
+    intent: "Add ether2 as a port of bridge1."
+    version: stable-v7
+    state_dependency: needs-config
+    safety_class: writes-config
+    relevant_areas: ["/interface/bridge/port", "bridge", "interface"]
+    gold_commands:
+      - "/interface/bridge/port add bridge=bridge1 interface=ether2"
+    expected_validation: ok
+
+  - id: iface-disable
+    domain: interfaces
+    intent: "Disable interface ether5."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/interface", "disable"]
+    gold_commands:
+      - "/interface/disable [find name=ether5]"
+    acceptable_variants:
+      - "/interface set [find name=ether5] disabled=yes"
+    expected_validation: ok
+
+  - id: iface-set-mtu
+    domain: interfaces
+    intent: "Set the MTU of ether1 to 9000."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/interface/ethernet", "mtu"]
+    gold_commands:
+      - "/interface/ethernet set [find name=ether1] mtu=9000"
+    expected_validation: ok
+
+  # ---------------- Wireless ----------------
+  - id: wifi-set-ssid
+    domain: wireless
+    intent: "On a wifi-capable device, set the SSID of wifi1 to MyNet."
+    version: 7.22+
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/interface/wifi", "ssid"]
+    gold_commands:
+      - "/interface/wifi set [find name=wifi1] ssid=MyNet"
+    expected_validation: ok
+
+  # ---------------- Queues / QoS ----------------
+  - id: queue-simple-limit
+    domain: queue
+    intent: "Limit 192.168.88.50 to 10M/10M with a simple queue."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/queue/simple", "target", "max-limit"]
+    gold_commands:
+      - "/queue/simple add name=limit-host target=192.168.88.50/32 max-limit=10M/10M"
+    expected_validation: ok
+
+  # ---------------- Users ----------------
+  - id: user-add-readonly
+    domain: users
+    intent: "Add a read-only user named auditor with a password."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/user", "group=read", "password"]
+    gold_commands:
+      - "/user add name=auditor group=read password=\"REPLACE_PW\""
+    expected_validation: ok
+
+  - id: user-disable
+    domain: users
+    intent: "Disable the user named olduser."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/user", "disable"]
+    gold_commands:
+      - "/user disable [find name=olduser]"
+    expected_validation: ok
+
+  # ---------------- System / backup / logs ----------------
+  - id: backup-create
+    domain: backup
+    intent: "Create a system backup named pre-change."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/system/backup/save", "name"]
+    gold_commands:
+      - "/system/backup/save name=pre-change"
+    expected_validation: ok
+
+  - id: export-config
+    domain: backup
+    intent: "Export the full configuration to a file named full-config."
+    version: stable-v7
+    state_dependency: read-only
+    safety_class: read-only
+    relevant_areas: ["/export", "file"]
+    gold_commands:
+      - "/export file=full-config"
+    expected_validation: ok
+
+  - id: identity-set
+    domain: system
+    intent: "Set the router identity (hostname) to core-router."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/system/identity", "name"]
+    gold_commands:
+      - "/system/identity set name=core-router"
+    expected_validation: ok
+
+  - id: ntp-client-enable
+    domain: system
+    intent: "Enable the NTP client pointing at pool.ntp.org."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/system/ntp/client", "enabled", "servers"]
+    gold_commands:
+      - "/system/ntp/client set enabled=yes servers=pool.ntp.org"
+    expected_validation: ok
+
+  - id: logs-read-recent
+    domain: logs
+    intent: "Show recent system log entries."
+    version: stable-v7
+    state_dependency: read-only
+    safety_class: read-only
+    relevant_areas: ["/log/print"]
+    gold_commands:
+      - "/log/print"
+    expected_validation: ok
+
+  # ---------------- Read-only / inspect ----------------
+  - id: read-interfaces
+    domain: interfaces
+    intent: "List all interfaces on the device."
+    version: stable-v7
+    state_dependency: read-only
+    safety_class: read-only
+    relevant_areas: ["/interface/print"]
+    gold_commands:
+      - "/interface/print"
+    expected_validation: ok
+
+  - id: read-ip-addresses
+    domain: ip-address
+    intent: "Show the configured IP addresses."
+    version: stable-v7
+    state_dependency: read-only
+    safety_class: read-only
+    relevant_areas: ["/ip/address/print"]
+    gold_commands:
+      - "/ip/address/print"
+    expected_validation: ok
+
+  - id: read-routes
+    domain: routes
+    intent: "Show the routing table."
+    version: stable-v7
+    state_dependency: read-only
+    safety_class: read-only
+    relevant_areas: ["/ip/route/print"]
+    gold_commands:
+      - "/ip/route/print"
+    expected_validation: ok
+
+  - id: read-firewall-filter
+    domain: firewall
+    intent: "List the firewall filter rules in order."
+    version: stable-v7
+    state_dependency: read-only
+    safety_class: read-only
+    relevant_areas: ["/ip/firewall/filter/print"]
+    gold_commands:
+      - "/ip/firewall/filter/print"
+    expected_validation: ok
+
+  - id: read-dhcp-leases
+    domain: dhcp
+    intent: "Show current DHCP leases."
+    version: stable-v7
+    state_dependency: read-only
+    safety_class: read-only
+    relevant_areas: ["/ip/dhcp-server/lease/print"]
+    gold_commands:
+      - "/ip/dhcp-server/lease/print"
+    expected_validation: ok
+
+  # ---------------- Trickier / multi-step ----------------
+  - id: fw-default-drop-input-last
+    domain: firewall
+    intent: "Add a final input rule dropping everything (a default-drop, placed last)."
+    version: stable-v7
+    state_dependency: needs-config
+    safety_class: destructive
+    relevant_areas: ["/ip/firewall/filter", "chain=input", "action=drop"]
+    gold_commands:
+      - "/ip/firewall/filter add chain=input action=drop"
+    forbidden_commands:
+      - "/ip/firewall/filter add chain=input action=drop place-before=0"
+    expected_validation: ok
+
+  - id: vlan-on-vlan-qinq
+    domain: vlan
+    intent: "Create a service-tagged (QinQ) VLAN 200 named svlan on ether2."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/interface/vlan", "use-service-tag", "vlan-id"]
+    gold_commands:
+      - "/interface/vlan add name=svlan vlan-id=200 interface=ether2 use-service-tag=yes"
+    expected_validation: ok
+
+  - id: mangle-mark-connection
+    domain: firewall
+    intent: "Mark connections from 192.168.88.0/24 with connection-mark lan-conn in prerouting."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/firewall/mangle", "chain=prerouting", "action=mark-connection", "new-connection-mark"]
+    gold_commands:
+      - "/ip/firewall/mangle add chain=prerouting src-address=192.168.88.0/24 action=mark-connection new-connection-mark=lan-conn"
+    expected_validation: ok

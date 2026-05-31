@@ -1,0 +1,69 @@
+# Benchmark configuration: the six approach configs under test.
+#
+# Each approach declares which context sources are injected into the model's
+# context window *before* any task work begins ("always_on"), and what extra
+# context an approach can pull in once the agent picks a path ("activated").
+#
+# This file is the single source of truth for what each config "is". The harness
+# reads it to build context, count tokens, and frame the comparison.
+
+# Where the raw context artifacts live (relative to repo root).
+sources:
+  mcp_tools: data/mcp_tools.json        # 166 mikrotik-mcp tool schemas (executable, SSH)
+  rosetta_tools: data/rosetta_tools.json # 14 rosetta MCP tool schemas (read-only docs RAG)
+  skills_snapshot: data/skills.json     # routeros-skills snapshot
+  skills_dir: ~/GitHub/routeros-skills  # refresh override: ROUTEROS_SKILLS_DIR
+
+# Capability tiers (used to keep token-cost comparisons fair / apples-to-apples).
+#   knowledge   : can inform, cannot touch a device
+#   execution   : can run commands against a live device
+tiers:
+  baseline: knowledge
+  skills: knowledge
+  rosetta: knowledge
+  skills+rosetta: knowledge
+  mcp: execution
+  mcp+rosetta+skills: execution
+
+approaches:
+  baseline:
+    label: "Training only"
+    description: "No augmentation. Relies on the model's pretrained RouterOS knowledge."
+    always_on: []
+    activated: []
+
+  skills:
+    label: "routeros-skills only"
+    description: >
+      11 markdown SKILL.md guides. Progressive disclosure: only the YAML frontmatter
+      description is always-on; the full body loads when the skill is invoked.
+    always_on: [skills_frontmatter]
+    activated: [skill_body]
+
+  rosetta:
+    label: "rosetta only"
+    description: >
+      Docs-as-RAG MCP. 14 tool schemas are always-on; document text is retrieved
+      on demand. Read-only — cannot change a device.
+    always_on: [rosetta_tools]
+    activated: [rosetta_retrieved_doc]
+
+  skills+rosetta:
+    label: "routeros-skills + rosetta"
+    description: "Both knowledge aids combined."
+    always_on: [skills_frontmatter, rosetta_tools]
+    activated: [skill_body, rosetta_retrieved_doc]
+
+  mcp:
+    label: "mikrotik-mcp only"
+    description: >
+      166 executable SSH tools. All tool schemas are always-on. Can read and mutate
+      a live device. No curated docs/retrieval layer.
+    always_on: [mcp_tools]
+    activated: [mcp_tool_result]
+
+  mcp+rosetta+skills:
+    label: "mikrotik-mcp + rosetta + routeros-skills"
+    description: "Everything: execution + retrieval + curated guides."
+    always_on: [mcp_tools, rosetta_tools, skills_frontmatter]
+    activated: [mcp_tool_result, rosetta_retrieved_doc, skill_body]
