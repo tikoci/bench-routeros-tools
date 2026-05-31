@@ -1,0 +1,6 @@
+task,command,device_version,accepted,device_message,note
+route-blackhole,/ip/route/add dst-address=10.99.0.0/24 type=blackhole,7.23,false,bad parameter type (line 1 column 44),baseline model hallucination; device rejects type= property
+route-blackhole,/ip/route/add dst-address=10.88.0.0/24 blackhole=yes,7.23,false,expected end of command (line 1 column 49),corpus gold form; device rejects =yes on bare flag
+route-blackhole,/ip/route/add dst-address=10.99.0.0/24 blackhole,7.23,true,,bare flag accepted; route created Active+static (only form that works on 7.23)
+vlan-create-basic,/interface/vlan/add name=vlan100 vlan-id=100 interface=ether2,7.23,false,input does not match any value of interface,gold assumes ether2; vanilla CHR has only ether1+lo (device-state dependency)
+vlan-create-basic,/interface/vlan/add name=vlan100 vlan-id=100 interface=ether1,7.23,true,,same command succeeds once interface matches an existing port
