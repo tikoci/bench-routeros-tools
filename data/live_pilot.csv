@@ -63,13 +63,13 @@ skills-context,vlan-create-basic,claude-sonnet-4-6,0,perfect,ok,1,1,0,0.02880555
 skills-context,vlan-create-basic,claude-sonnet-4-6,1,perfect,ok,1,1,0,0.029795550000000004,f7d19a1783da
 skills-context,vlan-create-basic,claude-sonnet-4-6,2,perfect,ok,1,1,0,0.036111300000000006,f7d19a1783da
 baseline,vlan-bridge-untagged-pvid,claude-sonnet-4-6,0,perfect,ok,2,2,0,0.02679455,5ec96c336eb5
-baseline,vlan-bridge-untagged-pvid,claude-sonnet-4-6,1,perfect,ok,2,2,0,0.026964549999999997,5ec96c336eb5
-baseline,vlan-bridge-untagged-pvid,claude-sonnet-4-6,2,perfect,ok,2,2,0,0.02290455,5ec96c336eb5
+baseline,vlan-bridge-untagged-pvid,claude-sonnet-4-6,1,wrong_target,ok,2,2,0,0.026964549999999997,5ec96c336eb5
+baseline,vlan-bridge-untagged-pvid,claude-sonnet-4-6,2,wrong_target,ok,2,2,0,0.02290455,5ec96c336eb5
 rosetta-context,vlan-bridge-untagged-pvid,claude-sonnet-4-6,0,perfect,ok,2,2,0,0.032695300000000004,0bb790548d82
 rosetta-context,vlan-bridge-untagged-pvid,claude-sonnet-4-6,1,perfect,ok,2,2,0,0.03084655,0bb790548d82
 rosetta-context,vlan-bridge-untagged-pvid,claude-sonnet-4-6,2,perfect,ok,2,2,0,0.0299953,0bb790548d82
-skills-context,vlan-bridge-untagged-pvid,claude-sonnet-4-6,0,perfect,ok,2,2,0,0.052961,b74fe731805d
-skills-context,vlan-bridge-untagged-pvid,claude-sonnet-4-6,1,perfect,ok,2,2,0,0.044985050000000006,b74fe731805d
+skills-context,vlan-bridge-untagged-pvid,claude-sonnet-4-6,0,wrong_target,ok,2,2,0,0.052961,b74fe731805d
+skills-context,vlan-bridge-untagged-pvid,claude-sonnet-4-6,1,wrong_target,ok,2,2,0,0.044985050000000006,b74fe731805d
 skills-context,vlan-bridge-untagged-pvid,claude-sonnet-4-6,2,perfect,ok,2,2,0,0.044288850000000005,b74fe731805d
 baseline,nat-dstnat-port-forward,claude-sonnet-4-6,0,perfect,ok,1,1,0,0.022670049999999997,34aa2894109c
 baseline,nat-dstnat-port-forward,claude-sonnet-4-6,1,perfect,ok,1,1,0,0.022650049999999994,34aa2894109c
@@ -82,7 +82,7 @@ skills-context,nat-dstnat-port-forward,claude-sonnet-4-6,1,hallucinated,ok,1,1,0
 skills-context,nat-dstnat-port-forward,claude-sonnet-4-6,2,hallucinated,ok,1,1,0,0.03435655,e99edade70a0
 baseline,route-blackhole,claude-sonnet-4-6,0,hallucinated,error,1,1,0,0.021591049999999997,538946ff048b
 baseline,route-blackhole,claude-sonnet-4-6,1,hallucinated,error,1,1,0,0.02163105,538946ff048b
-baseline,route-blackhole,claude-sonnet-4-6,2,missing_arg,ok,1,1,0,0.02155355,538946ff048b
+baseline,route-blackhole,claude-sonnet-4-6,2,perfect,ok,1,1,0,0.02155355,538946ff048b
 rosetta-context,route-blackhole,claude-sonnet-4-6,0,hallucinated,error,1,1,0,0.02896105,5992c6833954
 rosetta-context,route-blackhole,claude-sonnet-4-6,1,hallucinated,error,1,1,0,0.028936049999999998,5992c6833954
 rosetta-context,route-blackhole,claude-sonnet-4-6,2,hallucinated,error,1,1,0,0.02895105,5992c6833954
@@ -139,7 +139,7 @@ baseline,route-blackhole,claude-opus-4-7,1,hallucinated,error,1,1,0,0.048166,538
 baseline,route-blackhole,claude-opus-4-7,2,hallucinated,error,1,1,0,0.0481785,538946ff048b
 rosetta-context,route-blackhole,claude-opus-4-7,0,hallucinated,error,1,1,0,0.061914750000000005,5992c6833954
 rosetta-context,route-blackhole,claude-opus-4-7,1,hallucinated,error,1,1,0,0.05979825,5992c6833954
-rosetta-context,route-blackhole,claude-opus-4-7,2,missing_arg,ok,1,1,0,0.06185225,5992c6833954
+rosetta-context,route-blackhole,claude-opus-4-7,2,perfect,ok,1,1,0,0.06185225,5992c6833954
 skills-context,route-blackhole,claude-opus-4-7,0,hallucinated,error,1,1,0,0.0740865,049c46a189ed
 skills-context,route-blackhole,claude-opus-4-7,1,hallucinated,error,1,1,0,0.07407399999999999,049c46a189ed
 skills-context,route-blackhole,claude-opus-4-7,2,hallucinated,error,1,1,0,0.074084,049c46a189ed

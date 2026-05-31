@@ -256,8 +256,14 @@ tasks:
     state_dependency: stateless
     safety_class: writes-config
     relevant_areas: ["/ip/route", "blackhole", "type"]
+    # Gold corrected from `blackhole=yes` to the bare `blackhole` flag after CHR
+    # 7.23 device validation (data/live_chr_demo.csv): the device rejects
+    # `blackhole=yes` (`expected end of command`) and `type=blackhole`
+    # (`bad parameter type`); only the bare flag creates the route. The common
+    # `type=blackhole` hallucination is a cross-vendor model trap (see
+    # docs/REPORT_LIVE_GPT.md), kept in relevant_areas as a decoy signal.
     gold_commands:
-      - "/ip/route add dst-address=10.10.10.0/24 blackhole=yes"
+      - "/ip/route add dst-address=10.10.10.0/24 blackhole"
     expected_validation: ok
 
   # ---------------- WireGuard ----------------

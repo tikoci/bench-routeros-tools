@@ -164,24 +164,17 @@ class Chr:
         tokens = command.strip().split()
         if not tokens:
             return False, "empty"
+        raw_path = tokens[0]
         verbs = {"add", "set", "remove", "print", "save", "disable", "enable", "export"}
-        segs = [s for s in tokens[0].split("/") if s]
+        segs = [s for s in raw_path.split("/") if s]
         verb = None
         # verb may be the trailing path segment (/ip/route/add) ...
         if segs and segs[-1] in verbs:
             verb = segs[-1]
             segs = segs[:-1]
-        else:
-            # ... or a later bare token. RouterOS menus are interchangeably
-            # slash- or space-separated (/ip route add == /ip/route add), so
-            # intervening bare tokens are more of the menu path.
-            for tok in tokens[1:]:
-                if tok in verbs:
-                    verb = tok
-                    break
-                if "=" in tok or tok.startswith(("[", "!")):
-                    break
-                segs.append(tok)
+        # ... or the second whitespace token (/ip/route add ...)
+        elif len(tokens) > 1 and tokens[1] in verbs:
+            verb = tokens[1]
         # walk the tree
         prefix = ""
         for i, seg in enumerate(segs):

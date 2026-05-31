@@ -27,36 +27,39 @@ VERBS = {"add", "set", "remove", "print", "save", "disable", "enable", "export"}
 IDENTITY_ARGS = {
     "address", "dst-address", "src-address", "to-addresses", "mac-address",
     "vlan-id", "vlan-ids", "interface", "name", "gateway", "target", "ssid",
-    "servers", "dst-port", "to-ports", "list", "pvid",
+    "servers", "dst-port", "to-ports", "list", "pvid", "bridge",
 }
+
+_BARE_SEG = re.compile(r"^[a-z][a-z0-9-]*$")
 
 
 def _split(command: str):
-    """Return (canonical_path, verb).
+    """Return (canonical_slash_path, verb).
 
-    RouterOS treats the menu hierarchy as interchangeable slash- or space-
-    separated: `/interface/vlan add`, `/interface vlan add`, and
-    `/interface vlan add` are the same command. So the path is *all* leading
-    segments (across `/` and spaces) up to the verb or the first arg/selector;
-    e.g. `/interface vlan add name=x` -> ("/interface/vlan", "add").
+    RouterOS treats space- and slash-separated menu paths as equivalent
+    (`/interface bridge port set` == `/interface/bridge/port/set`). Both forms
+    normalize here so the scorer doesn't penalize a valid space-form command as
+    a wrong path -- a fragility surfaced by live-agent output.
     """
     toks = command.strip().split()
     if not toks:
         return "", None
     segs = [s for s in toks[0].split("/") if s]
-    # verb may be the trailing segment of the first token (/ip/route/add) ...
-    if segs and segs[-1] in VERBS:
-        return "/" + "/".join(segs[:-1]), segs[-1]
-    # ... or a later bare token, with intervening bare tokens being more of the
-    # menu path (/ip route add, /interface vlan add).
     verb = None
-    for tok in toks[1:]:
-        if tok in VERBS:
-            verb = tok
+    if segs and segs[-1] in VERBS:  # slash form: /ip/route/add
+        verb, segs = segs[-1], segs[:-1]
+    if verb is None:
+        # space form: consume bare path segments until the verb or first arg.
+        for tk in toks[1:]:
+            if "=" in tk or tk.startswith("[") or tk.startswith('"'):
+                break
+            if tk in VERBS:
+                verb = tk
+                break
+            if _BARE_SEG.match(tk):
+                segs.append(tk)
+                continue
             break
-        if "=" in tok or tok.startswith(("[", "!")):
-            break
-        segs.append(tok)
     return "/" + "/".join(segs), verb
 
 
