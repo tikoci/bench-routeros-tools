@@ -235,7 +235,97 @@ validity; scorer trust; capability/safety/staleness tradeoffs.
 success per approach, hallucination-rate reduction, error-recovery behavior,
 semantic-correctness rates. `harness/run_agent.py` already defines the candidate
 format and deterministic scorer; a real backend only needs to implement
-`produce_candidate(task, approach)`.
+`produce_candidate(task, approach)`. **Rungs 2–3 of that ladder are now done** —
+see §8 for a live mini-matrix (2 models × 3 conditions).
+
+---
+
+## 8. Live-generation mini-matrix (preliminary)
+
+> **Status: pilot evidence, not benchmark-quality.** N=6 tasks × 3 conditions ×
+> 2 models = 36 generations, **one generation per cell** (no repeats → no
+> variance estimate), run 2026-05-31 via `harness/live/run_live.py`. Cost: $0.79.
+> Read the **column-level patterns and the deltas**, not single cells — see the
+> variance caveat below.
+
+The structural metrics above never call a model. This rung does: it asks an
+isolated, non-interactive `claude -p` (with `--disable-slash-commands`,
+`--strict-mcp-config`, scratch cwd — so the local `routeros-*` skills and rosetta
+MCP can't leak in) for the commands to satisfy a task, then runs the emitted
+commands through the same `lib.scorer` and CHR `/console/inspect` validator the
+structural suite uses. Three conditions differ only by what text is pasted into
+the prompt: **baseline** (intent only), **rosetta-context** (+ rosetta's live
+`routeros_search` result), **skills-context** (+ the routeros-* frontmatter
+roster and the single best-matching SKILL.md body).
+
+`perfect` / `syntax-valid` out of 6, per model × condition:
+
+| Condition | Haiku 4.5 perfect | Haiku syntax | Sonnet 4.6 perfect | Sonnet syntax |
+|---|:--:|:--:|:--:|:--:|
+| baseline | 2/6 | 4/6 | **5/6** | 5/6 |
+| rosetta-context | **5/6** | **6/6** | 4/6 | **6/6** |
+| skills-context | 2/6 | 4/6 | 4/6 | 5/6 |
+
+What this says — none of it visible from the structural proxies:
+
+1. **The known-weird error is *not* a small-model artifact — the strongest case
+   for grounding.** On *route-blackhole*, **both** Haiku and Sonnet baseline emit
+   `/ip route add … type=blackhole` — the exact fake property the corpus author
+   first wrote and the CHR validator caught during development (RouterOS wants
+   `blackhole=yes`). A 2-tier model jump does **not** fix it; it is a genuine gap
+   in trained RouterOS knowledge. Grounding does move it: rosetta-context got
+   Sonnet to drop the fake `type=` and reach for `blackhole` (landing on
+   `missing_arg` — it wrote the flag without `=yes`, valid syntax). This is the
+   end-to-end proof §4 could only promise, and the clearest argument that a
+   validate/retrieve layer earns its keep *even as base models improve*.
+
+2. **Model size closes most *other* gaps.** Sonnet baseline (5/6) clears tasks
+   Haiku baseline misses, including *wg-add-peer*, where **Haiku refused**
+   ("I need the public key value…", no command) but Sonnet just wrote the correct
+   `/interface/wireguard/peers add …`. Refusal-on-underspecified-input was a
+   small-model behavior here, not a knowledge gap.
+
+3. **Augmentation helps the weak model and is net-neutral-to-negative for the
+   strong one** (on these *common* tasks). rosetta-context lifts Haiku from 2/6
+   to 5/6 perfect, but *lowers* Sonnet from 5/6 to 4/6: on *nat-dstnat-port-forward*
+   Sonnet was perfect from training, then with context added `in-interface-list=WAN`
+   and got scored `hallucinated`. Extra context invited over-specification on a
+   task the model already knew. Value-of-augmentation is model- and
+   task-dependent, not a constant win.
+
+4. **The two-signal design earns its keep.** Pairing the scorer label with CHR
+   validity *separates* two things the word "hallucinated" hides:
+   `type=blackhole` is `hallucinated` **+ syntax `error`** (a genuinely fake
+   property), while `in-interface-list=WAN` is `hallucinated` **+ syntax `ok`** (a
+   *real* NAT property, just not in gold — sensible elaboration, not a fabrication).
+   The latter is partly a scorer-strictness artifact: `lib.scorer` treats any
+   non-gold arg as forbidden. A future scoring pass should down-weight
+   valid-but-extra args versus fabricated ones.
+
+5. **Retrieval can also mislead, and it exposed a structural-metric caveat.** On
+   *route-blackhole*, rosetta's top hit for the natural-language intent was
+   `/routing/route` (a BGP page); Haiku followed it to a `wrong_path`. Yet
+   `data/retrieval.csv` scores this task hit@1 — because its `path_hit` counts a
+   hit when the last two segments (`ip`, `route`) appear as words *anywhere* in
+   the result, and they do inside the `/routing/route` page. So the **89% hit@5
+   overstates practical usefulness for natural-language intents whose path
+   segments are common words.** The live loop is what caught this.
+
+**Variance caveat (important).** One generation per cell; Haiku baseline in
+particular is noisy (a re-run flipped *vlan-create-basic* between `perfect` and
+`missing_arg`). Single-cell flips are noise. The robust signals here are the
+*column shapes* (Sonnet baseline ≫ Haiku baseline; rosetta lifts Haiku, not
+Sonnet) and the *mechanism findings* (#1, #2, #4), not any one number. Next rung:
+repeat each cell k times for a stability band, and add a closed-loop CHR readback
+condition. Raw transcripts: `data/live_pilot.jsonl`.
+
+Caveats specific to this pilot: Haiku is a small model (a larger one would likely
+close the *type=blackhole* gap from training alone); "baseline" still runs inside
+Claude Code's base system prompt (≈28K tokens of agent scaffolding), so it is
+"training-only-minus-RouterOS-augmentation," not a bare completion; and N=6/one
+run means no confidence intervals. The honest read is the **delta and the
+mechanisms**, not the absolute rates. Reproduce/extend with
+`./harness/live/run_live.py` (raw transcripts in `data/live_pilot.jsonl`).
 
 ---
 
@@ -249,5 +339,7 @@ format and deterministic scorer; a real backend only needs to implement
 | 46/46 gold valid, 12/12 fixtures | `data/command_validity.csv` |
 | Routing signal, budget fit | `data/proxy_*.csv` |
 | Scorer replay, capability grid | `data/agent_replay.csv`, `data/capability_matrix.csv` |
+| Live pilot (§8): baseline vs rosetta-context | `data/live_pilot.csv`, `data/live_pilot.jsonl` |
 
-Reproduce with `./run_all.sh`.
+Reproduce structural metrics with `./run_all.sh`; reproduce the live pilot with
+`.venv/bin/python harness/live/run_live.py` (needs the `claude` CLI; ~$0.15).

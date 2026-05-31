@@ -32,14 +32,31 @@ IDENTITY_ARGS = {
 
 
 def _split(command: str):
+    """Return (canonical_path, verb).
+
+    RouterOS treats the menu hierarchy as interchangeable slash- or space-
+    separated: `/interface/vlan add`, `/interface vlan add`, and
+    `/interface vlan add` are the same command. So the path is *all* leading
+    segments (across `/` and spaces) up to the verb or the first arg/selector;
+    e.g. `/interface vlan add name=x` -> ("/interface/vlan", "add").
+    """
     toks = command.strip().split()
-    path = toks[0] if toks else ""
-    segs = [s for s in path.split("/") if s]
-    verb = None
+    if not toks:
+        return "", None
+    segs = [s for s in toks[0].split("/") if s]
+    # verb may be the trailing segment of the first token (/ip/route/add) ...
     if segs and segs[-1] in VERBS:
-        verb, segs = segs[-1], segs[:-1]
-    elif len(toks) > 1 and toks[1] in VERBS:
-        verb = toks[1]
+        return "/" + "/".join(segs[:-1]), segs[-1]
+    # ... or a later bare token, with intervening bare tokens being more of the
+    # menu path (/ip route add, /interface vlan add).
+    verb = None
+    for tok in toks[1:]:
+        if tok in VERBS:
+            verb = tok
+            break
+        if "=" in tok or tok.startswith(("[", "!")):
+            break
+        segs.append(tok)
     return "/" + "/".join(segs), verb
 
 

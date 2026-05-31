@@ -35,7 +35,7 @@ approaches:
   skills:
     label: "routeros-skills only"
     description: >
-      11 markdown SKILL.md guides. Progressive disclosure: only the YAML frontmatter
+      12 markdown SKILL.md guides. Progressive disclosure: only the YAML frontmatter
       description is always-on; the full body loads when the skill is invoked.
     always_on: [skills_frontmatter]
     activated: [skill_body]
