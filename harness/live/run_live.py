@@ -34,10 +34,17 @@ Outputs:
   data/live_pilot.jsonl  full per-run record (prompt, prompt hash, raw stdout,
                          exit code, cost, parsed commands) for replay/audit
 
+Rung 3b (frontier-boxing + stability): pass `--repeats k` to run each cell k
+times for a stability band (modal label + agreement, written to
+data/live_matrix.csv), and `--models` to add frontier models (e.g.
+claude-opus-4-7,claude-opus-4-8) so the "would a bigger model fix it from
+training alone?" question is answered, not assumed.
+
 Usage:
   .venv/bin/python harness/live/run_live.py            # run the pilot
   .venv/bin/python harness/live/run_live.py --dry-run  # build prompts, no model calls
-  LIVE_MODEL=sonnet LIVE_TASKS=vlan-create-basic,route-blackhole ... # overrides
+  .venv/bin/python harness/live/run_live.py --models claude-haiku-4-5-20251001,claude-sonnet-4-6,claude-opus-4-7,claude-opus-4-8 --repeats 3
+  LIVE_MODELS=... LIVE_TASKS=... LIVE_REPEATS=3 ...    # env overrides
 """
 from __future__ import annotations
 
@@ -218,6 +225,9 @@ def main() -> None:
                     help="build/print prompts without calling the model")
     ap.add_argument("--models", default=",".join(DEFAULT_MODELS),
                     help="comma-separated model ids (mini-matrix)")
+    ap.add_argument("--repeats", type=int,
+                    default=int(os.environ.get("LIVE_REPEATS", "1")),
+                    help="generations per cell (k); >1 gives a stability band")
     args = ap.parse_args()
 
     tasks = load_tasks()
@@ -225,6 +235,7 @@ def main() -> None:
     task_ids = task_ids.split(",") if task_ids else DEFAULT_TASKS
     models = os.environ.get("LIVE_MODELS", args.models).split(",")
     approaches = APPROACHES
+    repeats = max(1, args.repeats)
 
     if args.dry_run:
         for tid in task_ids:
@@ -233,9 +244,17 @@ def main() -> None:
                 print(f"\n===== {ap_name} / {tid} =====\n{p}")
         return
 
+    DATA.mkdir(exist_ok=True)
+    n_cells = len(models) * len(task_ids) * len(approaches) * repeats
+    print(f"[live] matrix: {len(models)} models x {len(approaches)} conditions "
+          f"x {len(task_ids)} tasks x {repeats} repeats = {n_cells} generations")
+
     chr_ = chr_validator()
     rows, records = [], []
     total_cost = 0.0
+    # checkpoint per-run records to jsonl as we go, so a long/expensive run is
+    # not lost if it crashes mid-matrix.
+    jsonl_fh = open(DATA / "live_pilot.jsonl", "w")
     try:
         for model in models:
             print(f"\n--- model={model} ---")
@@ -244,59 +263,92 @@ def main() -> None:
                 for ap_name in approaches:
                     prompt = build_prompt(task, ap_name)
                     phash = hashlib.sha256(prompt.encode()).hexdigest()[:12]
-                    rec = call_claude(prompt, model)
-                    cmds = parse_commands(rec.get("result", ""))
-                    label, sub = predict_label(task, cmds) if cmds else ("empty", {})
-                    # syntax-validate each emitted command on CHR
-                    validity = "n/a"
-                    if chr_ is not None and cmds:
-                        verdicts = [chr_.validate(c) for c in cmds]
-                        validity = "ok" if all(v[0] for v in verdicts) else "error"
-                    total_cost += rec.get("cost_usd") or 0.0
-                    rows.append({
-                        "approach": ap_name, "task": tid, "model": model,
-                        "label": label, "syntax_valid": validity,
-                        "n_cmds": len(cmds), "n_gold": len(task["gold_commands"]),
-                        "exit_code": rec["exit_code"], "cost_usd": rec.get("cost_usd"),
-                        "prompt_hash": phash,
-                    })
-                    records.append({
-                        **rows[-1], "prompt": prompt, "raw_result": rec.get("result", ""),
-                        "parsed_commands": cmds, "scorer_sub": sub,
-                        "num_turns": rec.get("num_turns"), "wall_s": rec.get("wall_s"),
-                    })
-                    print(f"  {ap_name:16} {tid:28} -> {label:14} "
-                          f"syntax={validity:5} cmds={len(cmds)} "
-                          f"${rec.get('cost_usd') or 0:.3f}")
+                    for rep in range(repeats):
+                        rec = call_claude(prompt, model)
+                        cmds = parse_commands(rec.get("result", ""))
+                        label, sub = predict_label(task, cmds) if cmds else ("empty", {})
+                        # syntax-validate each emitted command on CHR
+                        validity = "n/a"
+                        if chr_ is not None and cmds:
+                            verdicts = [chr_.validate(c) for c in cmds]
+                            validity = "ok" if all(v[0] for v in verdicts) else "error"
+                        total_cost += rec.get("cost_usd") or 0.0
+                        rows.append({
+                            "approach": ap_name, "task": tid, "model": model,
+                            "rep": rep, "label": label, "syntax_valid": validity,
+                            "n_cmds": len(cmds), "n_gold": len(task["gold_commands"]),
+                            "exit_code": rec["exit_code"], "cost_usd": rec.get("cost_usd"),
+                            "prompt_hash": phash,
+                        })
+                        record = {
+                            **rows[-1], "prompt": prompt, "raw_result": rec.get("result", ""),
+                            "parsed_commands": cmds, "scorer_sub": sub,
+                            "num_turns": rec.get("num_turns"), "wall_s": rec.get("wall_s"),
+                        }
+                        records.append(record)
+                        jsonl_fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+                        jsonl_fh.flush()
+                        rtag = f" rep={rep}" if repeats > 1 else ""
+                        print(f"  {ap_name:16} {tid:28}{rtag} -> {label:14} "
+                              f"syntax={validity:5} cmds={len(cmds)} "
+                              f"${rec.get('cost_usd') or 0:.3f}")
     finally:
+        jsonl_fh.close()
         if chr_ is not None and getattr(chr_, "proc", None) is not None:
             chr_.stop()
 
-    DATA.mkdir(exist_ok=True)
-    fields = ["approach", "task", "model", "label", "syntax_valid", "n_cmds",
-              "n_gold", "exit_code", "cost_usd", "prompt_hash"]
+    fields = ["approach", "task", "model", "rep", "label", "syntax_valid",
+              "n_cmds", "n_gold", "exit_code", "cost_usd", "prompt_hash"]
     with open(DATA / "live_pilot.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=fields)
         w.writeheader()
         w.writerows(rows)
-    with open(DATA / "live_pilot.jsonl", "w") as fh:
-        for r in records:
-            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
 
-    # summary -- per model x approach
+    # per-cell aggregation (model x approach x task across repeats) -- the
+    # stability band the single-shot pilot lacked. modal_label + agreement tells
+    # whether a cell is stable or a coin-flip; perfect/syntax counts are k-of-N.
+    from collections import Counter
+    cell_keys = sorted({(r["model"], r["approach"], r["task"]) for r in rows})
+    matrix_rows = []
+    for model, ap_name, tid in cell_keys:
+        sub = [r for r in rows if r["model"] == model
+               and r["approach"] == ap_name and r["task"] == tid]
+        labels = [r["label"] for r in sub]
+        modal, modal_n = Counter(labels).most_common(1)[0]
+        matrix_rows.append({
+            "model": model, "approach": ap_name, "task": tid,
+            "n_rep": len(sub),
+            "n_perfect": sum(1 for r in sub if r["label"] == "perfect"),
+            "n_syntax_ok": sum(1 for r in sub if r["syntax_valid"] == "ok"),
+            "modal_label": modal,
+            "agreement": round(modal_n / len(sub), 2),
+            "labels": "|".join(labels),
+        })
+    with open(DATA / "live_matrix.csv", "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(matrix_rows[0].keys()))
+        w.writeheader()
+        w.writerows(matrix_rows)
+
+    # summary -- per model x approach, stability-aware
     def rate(model, ap_name, pred):
         sub = [r for r in rows if r["model"] == model and r["approach"] == ap_name]
         good = sum(1 for r in sub if pred(r))
         return good, len(sub)
 
-    print(f"\n[live] models={','.join(models)}  total_cost=${total_cost:.2f}")
+    print(f"\n[live] models={','.join(models)}  repeats={repeats}  "
+          f"total_cost=${total_cost:.2f}")
     for model in models:
         print(f"  {model}")
         for ap_name in approaches:
             g, n = rate(model, ap_name, lambda r: r["label"] == "perfect")
             gv, _ = rate(model, ap_name, lambda r: r["syntax_valid"] == "ok")
-            print(f"    {ap_name:16} perfect={g}/{n}  syntax_valid={gv}/{n}")
-    print(f"  wrote {DATA/'live_pilot.csv'}, live_pilot.jsonl")
+            # cells that are unstable (modal agreement < 1.0) under this condition
+            cells = [m for m in matrix_rows
+                     if m["model"] == model and m["approach"] == ap_name]
+            unstable = sum(1 for m in cells if m["agreement"] < 1.0)
+            print(f"    {ap_name:16} perfect={g}/{n}  syntax_valid={gv}/{n}  "
+                  f"unstable_cells={unstable}/{len(cells)}")
+    print(f"  wrote {DATA/'live_pilot.csv'}, live_pilot.jsonl, live_matrix.csv")
 
 
 if __name__ == "__main__":
