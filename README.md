@@ -37,21 +37,27 @@ A 10,000-foot view of what the data says. Full analysis + caveats in
   [skills](https://github.com/tikoci/routeros-skills)) to plan, `/console/inspect`
   to validate, a _small scoped_ execution surface to apply. Not the 166-tool
   firehose.
-- **Live pilot (preliminary, 2 models × 3 conditions × 6 tasks):**
-  - The "weird syntax" error (`type=blackhole` instead of `blackhole=yes`) is
-    **not** a small-model artifact — **both Haiku 4.5 and Sonnet 4.6 hallucinate
-    it from training.** Strongest argument that a grounding/validation layer earns
-    its keep _even as base models improve_.
-  - **Augmentation helps a weak model, but is net-neutral-to-negative for a strong
-    one** on common tasks (extra context invited over-specification). Value of
-    augmentation is model- and task-dependent.
-  - The committed structural retrieval number (89% hit@5) **overstates** practical
-    usefulness for natural-language intents whose path segments are common words —
-    a measurement caveat the live loop surfaced.
+- **Live pilots (grounded, preliminary):** see
+  [`docs/REPORT_LIVE.md`](docs/REPORT_LIVE.md) (Claude + closed-loop CHR),
+  [`docs/REPORT_LIVE_GPT.md`](docs/REPORT_LIVE_GPT.md) (cross-vendor GPT), and
+  [`docs/AGENTIC_FUTURES.md`](docs/AGENTIC_FUTURES.md) (forward recommendations).
+  - The "weird syntax" trap (`type=blackhole`) is **structural, not a small-model
+    artifact**: it persists across a **4-rung Claude scale ladder to the frontier
+    (Opus 4.8: 0/9)** _and_ across every GPT tier — invariant to vendor **and**
+    scale. Only **2 of 36** ladder generations reached the device-valid bare
+    `blackhole` flag.
+  - The device disagreed with the **gold itself**: `blackhole=yes` is
+    device-rejected, yet `/console/inspect` accepted it — an _inspect-vs-runtime
+    gap_. Gold corrected to the bare flag; only a device-grounded run tier caught
+    it. **This is the strongest argument for an explain → validate → run loop.**
+  - **Augmentation is model-dependent:** it lifts weak models (and erases their
+    fabrication) but is net-neutral-to-negative for strong ones (it invites
+    over-specification). Not a constant win.
 
 > Scope: RouterOS **7.22.1**. Token counts are a GPT-family proxy
-> (`tiktoken o200k_base`) — comparative, not absolute. Live-pilot cells are N=1
-> (no variance estimate); read column patterns, not single cells.
+> (`tiktoken o200k_base`) — comparative, not absolute. Live-pilot cells are small
+> N (the ladder uses k=3 repeats for a stability band); read column patterns and
+> bands, not single cells.
 
 Related tikoci projects under test/reference:
 [rosetta](https://github.com/tikoci/rosetta) ·
@@ -83,11 +89,12 @@ external [`mikrotik-mcp`](https://github.com/jeff-nasseri/mikrotik-mcp).
 | **D** Command syntax validity (gold + decoys) | `harness/validate_commands.py` | `data/command_validity.csv` |
 | **B/E/F** Routing-signal, scorer-vs-fixtures, budget sim | `harness/proxies.py`, `harness/run_agent.py` | `data/proxy_*.csv`, `data/agent_replay.csv` |
 | Capability matrix (read/validate/write/...) | `harness/run_agent.py` | `data/capability_matrix.csv` |
-| **Live pilot** — real `claude -p` generation, scored + CHR-validated | `harness/live/run_live.py` | `data/live_pilot.csv`, `.jsonl` |
+| **Live pilot** — real `copilot -p`/`claude -p` generation, scored + CHR-validated | `harness/live/run_live.py`, `run_gpt_matrix.py`, `run_live_ladder.py` | `data/live_pilot.*`, `live_gpt_matrix.*`, `live_ladder.*` |
 
-The first six metrics are **structural** (no model calls). The live pilot is the
-only one that calls a model; it is preliminary (see [`REPORT.md`](REPORT.md) §8)
-and not part of `./run_all.sh`.
+The first six metrics are **structural** (no model calls). The live pilots are the
+only ones that call a model; they are preliminary (see
+[`docs/REPORT_LIVE.md`](docs/REPORT_LIVE.md), [`REPORT_LIVE_GPT.md`](docs/REPORT_LIVE_GPT.md),
+and [`AGENTIC_FUTURES.md`](docs/AGENTIC_FUTURES.md)) and not part of `./run_all.sh`.
 
 ## Setup
 

@@ -3,8 +3,8 @@
 The full-matrix run (run_live.py) can lose cells to a `claude` session limit
 mid-run. This script re-runs a specific list of (model, approach, task) cells
 k times, scores + CHR-validates them exactly like run_live, then merges into the
-existing data/live_pilot.jsonl -- dropping any superseded rows for those cells
-and any session-limit casualties -- and rebuilds live_pilot.csv + live_matrix.csv.
+existing data/live_ladder.jsonl -- dropping any superseded rows for those cells
+and any session-limit casualties -- and rebuilds live_ladder.csv + live_ladder_matrix.csv.
 
 It is intentionally explicit about which cells it touches so the merge is
 auditable. Edit TARGETS below (or pass nothing and use the defaults, which cover
@@ -21,7 +21,7 @@ import json
 from collections import Counter
 from pathlib import Path
 
-import run_live as rl  # same dir; provides call_claude/build_prompt/etc.
+import run_live_ladder as rl  # same dir; provides call_claude/build_prompt/etc.
 from lib.scorer import predict_label
 
 DATA = Path(__file__).resolve().parents[2] / "data"

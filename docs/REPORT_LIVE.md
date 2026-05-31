@@ -6,10 +6,14 @@
 > evidence to guide future work — not statistically meaningful scores. See
 > [REPORT.md](../REPORT.md) for the structural benchmark and its caveats.
 >
-> **Companion:** [`REPORT_LIVE_GPT.md`](REPORT_LIVE_GPT.md) extends this to a
+> **Companions:** [`REPORT_LIVE_GPT.md`](REPORT_LIVE_GPT.md) extends this to a
 > **cross-vendor** pilot (GPT via Copilot CLI vs Claude via Claude Code) and
 > shows `route-blackhole` fails for *every* model/approach on *both* vendors —
 > which is why the corpus gold was corrected to the device-valid bare flag.
+> **Finding 6** below adds a **4-rung Claude scale ladder** (Haiku 4.5 → Opus 4.8)
+> with `k=3` stability bands, showing the same trap is invariant to **model
+> scale** up to the frontier — and [`AGENTIC_FUTURES.md`](AGENTIC_FUTURES.md)
+> turns all of this into forward recommendations for RouterOS agentic tooling.
 
 ## What this adds over the structural benchmark
 
@@ -140,6 +144,58 @@ Inspecting real emitted commands drove concrete oracle fixes:
   behavior* was actually correct. A safety-aware scorer should separate
   "did something forbidden" from "added a harmless arg".
 
+## Finding 6: scale does not fix the trap — a 4-rung Claude ladder confirms it
+
+Findings 1 and 4 show `route-blackhole` is a trap on the `copilot` backend. The
+obvious objection is *"a bigger/better base model would just know the right
+syntax."* A separate Claude run boxes that in. It sweeps a **4-rung model ladder**
+— Haiku 4.5 → Sonnet 4.6 → Opus 4.7 → **Opus 4.8 (frontier)** — across three
+context conditions (`baseline` / `rosetta-context` / `skills-context`), over the
+same 6-task subset, with **each cell repeated `k=3`** so a single noisy
+generation can't masquerade as signal. Artifacts: `data/live_ladder*.{csv,jsonl}`,
+analysis via `harness/live/analyze_ladder.py`. (Opus 4.8 is a `route-blackhole`
+crux + easy-task sanity **spot-check** — the rest of its grid was lost to a CLI
+session limit; see `data/PROVENANCE.md`.)
+
+**The crux is invariant to scale.** Of **36** `route-blackhole` generations across
+the whole ladder, only **2** reached the device-valid bare `blackhole` flag — and
+both were 1-of-3 within their cell (a coin-flip, not a capability). **30 of 36**
+emitted the device-invalid `type=blackhole`:
+
+| Model | device-valid (bare `blackhole`) | emitted `type=blackhole` | other wrong |
+|---|:--:|:--:|:--:|
+| Haiku 4.5 | 0 / 9 | 5 | 4 (`/routing/route`) |
+| Sonnet 4.6 | 1 / 9 | 8 | — |
+| Opus 4.7 | 1 / 9 | 8 | — |
+| **Opus 4.8 (frontier)** | **0 / 9** | 8 | 1 (`/routing/route`) |
+
+The frontier model fails this task **as reliably as the smallest one**. Moving up
+two model generations does not buy the device-valid form — it is a genuine,
+flat gap in trained RouterOS knowledge, exactly where Finding 1 said the
+device-grounded tier earns its keep. Combined with the **cross-vendor** result in
+[`REPORT_LIVE_GPT.md`](REPORT_LIVE_GPT.md) (every GPT model/approach also fails
+`route-blackhole`), the trap is invariant to **both vendor and scale** — the
+strongest possible case that no amount of base-model improvement on the visible
+trend line closes it. A `validate → run` tier does.
+
+**The `k=3` band also corrected a single-shot over-claim.** An earlier one-shot
+read suggested `rosetta-context` "moved Sonnet to drop `type=blackhole`"; at
+`k=3` that cell is **3/3 `type=blackhole`** — the earlier flip was noise. Live
+single-shot cells are unreliable; report **column shapes and stability bands**,
+not individual cells. (10 of 58 ladder cells disagreed across their 3 repeats,
+concentrated in the weakest model.)
+
+**Secondary — augmentation value is model-dependent, not a constant.**
+`rosetta-context` lifted Haiku's syntax-valid fraction to **18/18** (it eliminated
+*fabrication*, even when not gold-perfect) and its perfect rate 8→14/18; for
+Sonnet and Opus the same context was net-neutral. `skills-context` was
+neutral-to-negative across the board: the skill body's worked examples induced
+**over-specification** (e.g. adding `in-interface-list=WAN` to a dst-nat rule),
+which the strict scorer marks `hallucinated`. Practical rule: spend augmentation
+budget on the **weak** model and on version-new / flag-shape uncertainty; for a
+strong model on common syntax, extra context mostly adds over-specification risk
+(echoing Finding 3).
+
 ## Future directions: scoped execution CLIs as a validation tier
 
 The MCP path exposes ~166 tools — a firehose that costs context and invites
@@ -155,10 +211,11 @@ agent ↔ RouterOS work, organized as **tiers** rather than one giant tool surfa
    instance — `quickchr exec <name> "<cmd>"` (used for this pilot's CHR demo),
    or `centrs` for container-hosted topologies. This tier is where the gold-vs-
    device disagreement surfaced. A 3–5 verb CLI (`exec`, `snapshot`, `readback`,
-   `clean`) is a far smaller, safer attack/àcontext surface than 166 MCP tools,
+   `clean`) is a far smaller, safer attack/context surface than 166 MCP tools,
    and it is the **only** tier that grounds correctness.
 
 Concretely for this project:
+
 - **`quickchr` as the execution tier** is validated here: boot/reuse a CHR,
   `exec` a candidate, read back state, `clean`. It directly grounded Findings 1–2.
 - **`centrs` (not installed in this environment)** is the analogous tier for
@@ -180,6 +237,10 @@ uv venv && uv pip install -e .          # or: python3 -m venv .venv && .venv/bin
 .venv/bin/python harness/live/run_live.py             # uses data/live_cache/, writes data/live_pilot.*
 # Closed-loop device demo (needs quickchr + a CHR instance):
 quickchr start <instance> && quickchr exec <instance> "<command>"
+# Claude model-scale ladder (Finding 6); needs the claude CLI + a CHR validator:
+.venv/bin/python harness/live/run_live_ladder.py \
+  --models claude-haiku-4-5-20251001,claude-sonnet-4-6,claude-opus-4-7 --repeats 3
+.venv/bin/python harness/live/analyze_ladder.py    # summarize data/live_ladder*
 ```
 
 `data/live_cache/` is git-ignored (regenerable, and avoids committing model

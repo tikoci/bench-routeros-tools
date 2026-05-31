@@ -2,8 +2,10 @@
 
 **Status: PILOT evidence.** Small n, one backend per vendor, single run per cell
 (GPT side) or 3 reps per cell (Claude side). This is directional grounding to
-steer future work, **not** benchmark-quality scoring. See `REPORT.md` §8 for the
-structural benchmark and `docs/REPORT_LIVE.md` for the first copilot-default pilot.
+steer future work, **not** benchmark-quality scoring. See [`REPORT.md`](../REPORT.md)
+for the structural benchmark, [`REPORT_LIVE.md`](REPORT_LIVE.md) for the
+copilot-default pilot + Claude scale ladder, and
+[`AGENTIC_FUTURES.md`](AGENTIC_FUTURES.md) for forward recommendations.
 
 ## What this adds
 
@@ -87,7 +89,7 @@ benchmark would have scored everyone against a wrong answer.
 > the validation-tier thesis: inspect/schema validation is a cheap first gate, but
 > a scoped **runtime** execution tier (quickchr/centrs) catches parser-level
 > errors that schema introspection misses.
-
+>
 > **Done in this change:** `route-blackhole` gold was corrected from
 > `blackhole=yes` to the bare `blackhole` flag in `tasks/corpus.yaml`, with an
 > inline CHR-validated note. Structural result CSVs predate the fix and should be
