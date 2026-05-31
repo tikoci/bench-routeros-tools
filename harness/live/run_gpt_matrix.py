@@ -14,6 +14,7 @@ crux, where both Claude models hallucinated the fake ``type=blackhole`` property
 Cost control (measured 2026-05-31, Copilot premium-request multipliers):
   * gpt-4.1     -> 0    premium/call  (full grid, free)
   * gpt-5-mini  -> 0    premium/call  (full grid, free)
+  * gpt-5.4     -> 1    premium/call  (DIAGNOSTIC SUBSET ONLY, true 1x tier)
   * gpt-5.5     -> ~7.5 premium/call  (DIAGNOSTIC SUBSET ONLY)
 So the expensive frontier model is spent only on the two sharpest axes
 (training-knowledge gap + version-new feature), while the free models cover the
@@ -62,6 +63,7 @@ APPROACHES = ["baseline", "rosetta"]
 PLAN = {
     "gpt-4.1":    (FULL_TASKS, 0.0),
     "gpt-5-mini": (FULL_TASKS, 0.0),
+    "gpt-5.4":    (CRUX_TASKS, 1.0),
     "gpt-5.5":    (CRUX_TASKS, 7.5),
 }
 

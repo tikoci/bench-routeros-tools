@@ -15,8 +15,10 @@ cross-reference against **device truth** captured on a disposable CHR 7.23 via
 `quickchr` (`data/live_chr_demo.csv`).
 
 - **GPT side** (`data/live_gpt_matrix.csv`, this branch): `copilot -p` with
-  `--model gpt-4.1`, `gpt-5-mini`, `gpt-5.5`. Approaches: `baseline` (no context)
-  vs `rosetta` (real retrieved docs injected as text).
+  `--model gpt-4.1`, `gpt-5-mini`, `gpt-5.4`, `gpt-5.5`. Approaches: `baseline`
+  (no context) vs `rosetta` (real retrieved docs injected as text). The two free
+  models (gpt-4.1, gpt-5-mini) cover the full 6-task grid; the paid 1× (gpt-5.4)
+  and 7.5× (gpt-5.5) models run only the 2 crux tasks to cap premium spend.
 - **Claude side** (`data/live_matrix.csv`, parallel Claude Code session, cited
   read-only): `claude-haiku-4-5`, `claude-sonnet-4-6`, `claude-opus-4-7`, 3 reps,
   approaches `baseline` / `rosetta-context` / `skills-context`.
@@ -25,12 +27,14 @@ cross-reference against **device truth** captured on a disposable CHR 7.23 via
 
 ## Perfect-rate summary (GOOD = perfect | equivalent | refused_safe)
 
-GPT side (this branch, 1 rep/cell; gpt-5.5 ran only the 2 crux tasks to cap cost):
+GPT side (this branch, 1 rep/cell; gpt-5.4 & gpt-5.5 ran only the 2 crux tasks to
+cap cost):
 
 | model | premium/call | baseline | rosetta |
 |---|---|---|---|
 | gpt-4.1 | 0× | 3/6 | **5/6** |
 | gpt-5-mini | 0× | 2/6 | 1/6 |
+| gpt-5.4 | 1× | 0/2 | 0/2 |
 | gpt-5.5 | 7.5× | 0/2 | 0/2 |
 
 Claude side (parallel, 3 reps/cell → /18; opus-4-8 excluded):
@@ -49,8 +53,9 @@ This is the headline. Across **both vendors, every model tier, and every
 augmentation approach**, not a single cell produced the device-valid blackhole
 route:
 
-- Every GPT cell emitted `type=blackhole` (gpt-4.1, gpt-5-mini, gpt-5.5, both
-  approaches), except gpt-5-mini+rosetta which produced `gateway=blackhole`.
+- Every GPT cell emitted `type=blackhole` (gpt-4.1, gpt-5-mini, gpt-5.4,
+  gpt-5.5, both approaches), except gpt-5-mini+rosetta which produced
+  `gateway=blackhole`.
 - Every Claude cell was `hallucinated` (baseline/skills) or `wrong_path`
   (Haiku+rosetta). Sonnet+rosetta **stayed `hallucinated`** — retrieval did not
   rescue it.
@@ -109,13 +114,16 @@ skill-file framing. Worth a dedicated comparison in future live runs.
 
 ### 5. Cost did not buy correctness on the hard tasks
 
-gpt-5.5 (7.5 premium/call) scored **0/2** on the two crux tasks, while
-**free** gpt-4.1 (0 premium) hit 5/6 overall and was the only model to get the
-version-new wifi task right (`/interface/wifi set [find …] ssid=…`). gpt-5.5 used
-the deprecated nested `configuration.ssid=` form instead — a **non-monotonic**
-result where the cheaper, older model out-performed the frontier one on
-version-specific syntax. For *grounding research*, the free GPT models delivered
-the most signal per dollar.
+Both paid tiers — gpt-5.4 (1×) and gpt-5.5 (7.5×) — scored **0/2** on the two
+crux tasks, while **free** gpt-4.1 (0×) hit 5/6 overall and was the only model to
+get the version-new wifi task right (`/interface/wifi set [find …] ssid=…`). Both
+gpt-5.4 and gpt-5.5 instead used the deprecated nested `configuration.ssid=` form
+— so the newer "5.x" family **regressed** on this specific version-new syntax
+relative to the older gpt-4.1's flat `ssid=`. This is a **non-monotonic** result
+where the cheaper, older model out-performed *both* paid newer ones on
+version-specific syntax, and paying 7.5× over the 1× tier bought **no** crux
+improvement. For *grounding research*, the free GPT models delivered the most
+signal per dollar.
 
 ### 6. Refusal behavior — small models refuse more
 
@@ -129,13 +137,13 @@ stopped refusing and emitted the command.
 - **PILOT, small n.** GPT cells are single-run; Claude cells are 3-rep. Treat
   rates as directional.
 - **Copilot skill auto-load.** `copilot -p` auto-invoked the user's
-  `routeros-fundamentals` skill on **all 4 gpt-5.5 calls** despite
-  `--available-tools ""` (the more-agentic model reached for it; gpt-4.1,
-  gpt-5-mini, and the earlier copilot-default pilot did **not** load any skill).
-  This means gpt-5.5 had *extra* RouterOS help the others lacked — yet still
-  failed both crux tasks, so the comparison is **conservative** against gpt-5.5,
-  not inflated. The Claude matrix isolated skills explicitly via a separate
-  `skills-context` approach.
+  `routeros-fundamentals` skill on **all 4 gpt-5.5 calls and 3 of 4 gpt-5.4
+  calls** despite `--available-tools ""` (the more-agentic newer models reached
+  for it; gpt-4.1, gpt-5-mini, and the earlier copilot-default pilot did **not**
+  load any skill). This means gpt-5.4/gpt-5.5 had *extra* RouterOS help the others
+  lacked — yet still failed both crux tasks, so the comparison is **conservative**
+  against the paid models, not inflated. The Claude matrix isolated skills
+  explicitly via a separate `skills-context` approach.
 - **One backend per vendor.** "GPT" = Copilot CLI's harness (~28k fixed input
   tokens/call); "Claude" = Claude Code. Vendor and harness are confounded; don't
   read these as pure model comparisons.

@@ -23,13 +23,13 @@ pilot. They are **pilot evidence, not benchmark-quality** (single backend
 | `live_pilot.csv` | `harness/live/run_live.py` — per-(approach,task) score row |
 | `live_pilot.jsonl` | full transcripts (prompt, emitted commands, label) for each call |
 | `live_chr_demo.csv` | `quickchr exec` device verdicts on RouterOS 7.23 (closed-loop demo) |
-| `live_gpt_matrix.csv` | `harness/live/run_gpt_matrix.py` — cross-model GPT pilot (gpt-4.1, gpt-5-mini, gpt-5.5) via `copilot -p --model` |
+| `live_gpt_matrix.csv` | `harness/live/run_gpt_matrix.py` — cross-model GPT pilot (gpt-4.1, gpt-5-mini, gpt-5.4, gpt-5.5) via `copilot -p --model` |
 | `live_gpt_matrix.jsonl` | full transcripts for the GPT matrix |
 
 The GPT matrix is a cross-vendor companion to the Claude Code live matrix; see
 [`docs/REPORT_LIVE_GPT.md`](../docs/REPORT_LIVE_GPT.md). Copilot premium cost is
-recorded per row (`premium_mult`): gpt-4.1/gpt-5-mini = 0×, gpt-5.5 = 7.5×; the
-expensive model ran only the two crux tasks to cap spend.
+recorded per row (`premium_mult`): gpt-4.1/gpt-5-mini = 0×, gpt-5.4 = 1×,
+gpt-5.5 = 7.5×; the two paid models ran only the two crux tasks to cap spend.
 
 `data/live_cache/` (raw cached model output, keyed by prompt hash) is
 **git-ignored**: it is regenerable and avoids committing model output verbatim.

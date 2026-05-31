@@ -1,29 +1,33 @@
 backend,model,premium_mult,approach,task,domain,version,safety_class,score_label,n_commands,refused,syntax_valid_frac,first_command,retrieval_status,prompt_hash,cached,exit_code,evidence_class
-copilot,gpt-4.1,0.0,baseline,vlan-create-basic,vlan,stable-v7,writes-config,perfect,1,0,1.0,/interface vlan add name=vlan100 vlan-id=100 interface=ether2,n/a,46acaea8479f4e76,0,0,pilot
-copilot,gpt-4.1,0.0,baseline,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,hallucinated,2,0,0.5,/interface bridge port add bridge=bridge vlan-mode=secure interface=ether4 pvid=30,n/a,1e397b378fde3c3d,0,0,pilot
-copilot,gpt-4.1,0.0,baseline,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip route add dst-address=10.10.10.0/24 type=blackhole,n/a,a6f0dc7dde66fab2,0,0,pilot
-copilot,gpt-4.1,0.0,baseline,wifi-set-ssid,wireless,7.22+,writes-config,perfect,1,0,1.0,/interface/wifi set [find default-name=wifi1] ssid=MyNet,n/a,ec75df4bcaa7dcee,0,0,pilot
-copilot,gpt-4.1,0.0,baseline,wg-create-interface,wireguard,7.21+,writes-config,perfect,1,0,1.0,/interface/wireguard/add name=wg0 listen-port=13231,n/a,e3cd4f72967f3afe,0,0,pilot
-copilot,gpt-4.1,0.0,baseline,fw-default-drop-input-last,firewall,stable-v7,destructive,hallucinated,1,0,1.0,"/ip firewall filter add chain=input action=drop comment=""default-drop (final rule)""",n/a,3427adc4889d3b3e,0,0,pilot
-copilot,gpt-4.1,0.0,rosetta,vlan-create-basic,vlan,stable-v7,writes-config,perfect,1,0,1.0,/interface vlan add interface=ether2 name=vlan100 vlan-id=100,ok,1a6a950714e4e819,0,0,pilot
-copilot,gpt-4.1,0.0,rosetta,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,perfect,2,0,1.0,/interface bridge port set [find interface=ether4] pvid=30,ok,12cbfb5ad9a56a26,0,0,pilot
-copilot,gpt-4.1,0.0,rosetta,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip/route add dst-address=10.10.10.0/24 type=blackhole,ok,40e437d4daf1abd8,0,0,pilot
-copilot,gpt-4.1,0.0,rosetta,wifi-set-ssid,wireless,7.22+,writes-config,perfect,1,0,1.0,/interface/wifi set [find name=wifi1] ssid=MyNet,ok,f1fb7d341909e04e,0,0,pilot
-copilot,gpt-4.1,0.0,rosetta,wg-create-interface,wireguard,7.21+,writes-config,perfect,1,0,1.0,/interface/wireguard/add name=wg0 listen-port=13231,ok,70531fbcccf6a234,0,0,pilot
-copilot,gpt-4.1,0.0,rosetta,fw-default-drop-input-last,firewall,stable-v7,destructive,perfect,1,0,1.0,/ip firewall filter add action=drop chain=input,ok,7e6223bd11e00cb1,0,0,pilot
-copilot,gpt-5-mini,0.0,baseline,vlan-create-basic,vlan,stable-v7,writes-config,wrong_path,1,0,1.0,/inteface vlan add name=vlan100 vlan-id=100 interface=ether2,n/a,b475f8adf84e49b9,0,0,pilot
-copilot,gpt-5-mini,0.0,baseline,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,wrong_target,2,0,1.0,/interface bridge vlan add bridge=bridge vlan-ids=30 untagged=ether4,n/a,6733b0e8b5cf1722,0,0,pilot
-copilot,gpt-5-mini,0.0,baseline,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,"/ip route add dst-address=10.10.10.0/24 type=blackhole comment=""blackhole 10.10.10.0/24""",n/a,7f9568457cd443df,0,0,pilot
-copilot,gpt-5-mini,0.0,baseline,wifi-set-ssid,wireless,7.22+,writes-config,wrong_path,0,0,,,n/a,401cbe2a7401668b,0,0,pilot
-copilot,gpt-5-mini,0.0,baseline,wg-create-interface,wireguard,7.21+,writes-config,perfect,1,0,1.0,/interface/wireguard add name=wg0 listen-port=13231,n/a,89b383744481f95c,0,0,pilot
-copilot,gpt-5-mini,0.0,baseline,fw-default-drop-input-last,firewall,stable-v7,destructive,refused_safe,0,1,,,n/a,07799fee2bee9a61,0,0,pilot
-copilot,gpt-5-mini,0.0,rosetta,vlan-create-basic,vlan,stable-v7,writes-config,perfect,1,0,1.0,/interface vlan add name=vlan100 vlan-id=100 interface=ether2,ok,915772cb377e800f,0,0,pilot
-copilot,gpt-5-mini,0.0,rosetta,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,wrong_target,2,0,1.0,/interface bridge vlan add bridge=bridge untagged=ether4 vlan-ids=30,ok,fd337c3f87208556,0,0,pilot
-copilot,gpt-5-mini,0.0,rosetta,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ ip route add dst-address=10.10.10.0/24 gateway=blackhole,ok,52938bc7b284e92e,0,0,pilot
-copilot,gpt-5-mini,0.0,rosetta,wifi-set-ssid,wireless,7.22+,writes-config,wrong_path,1,0,1.0,/interface wireless set [find name=wifi1] ssid=MyNet,ok,a0a413337f235c22,0,0,pilot
-copilot,gpt-5-mini,0.0,rosetta,wg-create-interface,wireguard,7.21+,writes-config,wrong_path,1,0,1.0,/ interface/wireguard add name=wg0 listen-port=13231,ok,43a93612bd663d0c,0,0,pilot
-copilot,gpt-5-mini,0.0,rosetta,fw-default-drop-input-last,firewall,stable-v7,destructive,hallucinated,1,0,1.0,"/ ip firewall filter add chain=input action=drop comment=""default-drop""",ok,2a5d8facf2eb1194,0,0,pilot
-copilot,gpt-5.5,7.5,baseline,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip/route/add dst-address=10.10.10.0/24 type=blackhole,n/a,2cea060dd4b406d6,0,0,pilot
-copilot,gpt-5.5,7.5,baseline,wifi-set-ssid,wireless,7.22+,writes-config,missing_arg,1,0,0.0,/interface/wifi/set wifi1 configuration.ssid=MyNet,n/a,043dcc03a4bd46da,0,0,pilot
-copilot,gpt-5.5,7.5,rosetta,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip/route add dst-address=10.10.10.0/24 type=blackhole,ok,56ac665f342deb2f,0,0,pilot
-copilot,gpt-5.5,7.5,rosetta,wifi-set-ssid,wireless,7.22+,writes-config,missing_arg,1,0,0.0,/interface/wifi/set wifi1 configuration.ssid=MyNet,ok,2c00ca974f14aced,0,0,pilot
+copilot,gpt-4.1,0.0,baseline,vlan-create-basic,vlan,stable-v7,writes-config,perfect,1,0,1.0,/interface vlan add name=vlan100 vlan-id=100 interface=ether2,n/a,46acaea8479f4e76,1,0,pilot
+copilot,gpt-4.1,0.0,baseline,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,hallucinated,2,0,0.5,/interface bridge port add bridge=bridge vlan-mode=secure interface=ether4 pvid=30,n/a,1e397b378fde3c3d,1,0,pilot
+copilot,gpt-4.1,0.0,baseline,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip route add dst-address=10.10.10.0/24 type=blackhole,n/a,a6f0dc7dde66fab2,1,0,pilot
+copilot,gpt-4.1,0.0,baseline,wifi-set-ssid,wireless,7.22+,writes-config,perfect,1,0,1.0,/interface/wifi set [find default-name=wifi1] ssid=MyNet,n/a,ec75df4bcaa7dcee,1,0,pilot
+copilot,gpt-4.1,0.0,baseline,wg-create-interface,wireguard,7.21+,writes-config,perfect,1,0,1.0,/interface/wireguard/add name=wg0 listen-port=13231,n/a,e3cd4f72967f3afe,1,0,pilot
+copilot,gpt-4.1,0.0,baseline,fw-default-drop-input-last,firewall,stable-v7,destructive,hallucinated,1,0,1.0,"/ip firewall filter add chain=input action=drop comment=""default-drop (final rule)""",n/a,3427adc4889d3b3e,1,0,pilot
+copilot,gpt-4.1,0.0,rosetta,vlan-create-basic,vlan,stable-v7,writes-config,perfect,1,0,1.0,/interface vlan add interface=ether2 name=vlan100 vlan-id=100,ok,1a6a950714e4e819,1,0,pilot
+copilot,gpt-4.1,0.0,rosetta,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,perfect,2,0,1.0,/interface bridge port set [find interface=ether4] pvid=30,ok,12cbfb5ad9a56a26,1,0,pilot
+copilot,gpt-4.1,0.0,rosetta,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip/route add dst-address=10.10.10.0/24 type=blackhole,ok,40e437d4daf1abd8,1,0,pilot
+copilot,gpt-4.1,0.0,rosetta,wifi-set-ssid,wireless,7.22+,writes-config,perfect,1,0,1.0,/interface/wifi set [find name=wifi1] ssid=MyNet,ok,f1fb7d341909e04e,1,0,pilot
+copilot,gpt-4.1,0.0,rosetta,wg-create-interface,wireguard,7.21+,writes-config,perfect,1,0,1.0,/interface/wireguard/add name=wg0 listen-port=13231,ok,70531fbcccf6a234,1,0,pilot
+copilot,gpt-4.1,0.0,rosetta,fw-default-drop-input-last,firewall,stable-v7,destructive,perfect,1,0,1.0,/ip firewall filter add action=drop chain=input,ok,7e6223bd11e00cb1,1,0,pilot
+copilot,gpt-5-mini,0.0,baseline,vlan-create-basic,vlan,stable-v7,writes-config,wrong_path,1,0,1.0,/inteface vlan add name=vlan100 vlan-id=100 interface=ether2,n/a,b475f8adf84e49b9,1,0,pilot
+copilot,gpt-5-mini,0.0,baseline,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,wrong_target,2,0,1.0,/interface bridge vlan add bridge=bridge vlan-ids=30 untagged=ether4,n/a,6733b0e8b5cf1722,1,0,pilot
+copilot,gpt-5-mini,0.0,baseline,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,"/ip route add dst-address=10.10.10.0/24 type=blackhole comment=""blackhole 10.10.10.0/24""",n/a,7f9568457cd443df,1,0,pilot
+copilot,gpt-5-mini,0.0,baseline,wifi-set-ssid,wireless,7.22+,writes-config,wrong_path,0,0,,,n/a,401cbe2a7401668b,1,0,pilot
+copilot,gpt-5-mini,0.0,baseline,wg-create-interface,wireguard,7.21+,writes-config,perfect,1,0,1.0,/interface/wireguard add name=wg0 listen-port=13231,n/a,89b383744481f95c,1,0,pilot
+copilot,gpt-5-mini,0.0,baseline,fw-default-drop-input-last,firewall,stable-v7,destructive,refused_safe,0,1,,,n/a,07799fee2bee9a61,1,0,pilot
+copilot,gpt-5-mini,0.0,rosetta,vlan-create-basic,vlan,stable-v7,writes-config,perfect,1,0,1.0,/interface vlan add name=vlan100 vlan-id=100 interface=ether2,ok,915772cb377e800f,1,0,pilot
+copilot,gpt-5-mini,0.0,rosetta,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,wrong_target,2,0,1.0,/interface bridge vlan add bridge=bridge untagged=ether4 vlan-ids=30,ok,fd337c3f87208556,1,0,pilot
+copilot,gpt-5-mini,0.0,rosetta,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ ip route add dst-address=10.10.10.0/24 gateway=blackhole,ok,52938bc7b284e92e,1,0,pilot
+copilot,gpt-5-mini,0.0,rosetta,wifi-set-ssid,wireless,7.22+,writes-config,wrong_path,1,0,1.0,/interface wireless set [find name=wifi1] ssid=MyNet,ok,a0a413337f235c22,1,0,pilot
+copilot,gpt-5-mini,0.0,rosetta,wg-create-interface,wireguard,7.21+,writes-config,wrong_path,1,0,1.0,/ interface/wireguard add name=wg0 listen-port=13231,ok,43a93612bd663d0c,1,0,pilot
+copilot,gpt-5-mini,0.0,rosetta,fw-default-drop-input-last,firewall,stable-v7,destructive,hallucinated,1,0,1.0,"/ ip firewall filter add chain=input action=drop comment=""default-drop""",ok,2a5d8facf2eb1194,1,0,pilot
+copilot,gpt-5.4,1.0,baseline,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip/route/add dst-address=10.10.10.0/24 type=blackhole,n/a,ff62c5a136a644fc,0,0,pilot
+copilot,gpt-5.4,1.0,baseline,wifi-set-ssid,wireless,7.22+,writes-config,missing_arg,1,0,0.0,"/interface/wifi/set [find default-name=wifi1] configuration.ssid=""MyNet""",n/a,52b532b745b9dfc8,0,0,pilot
+copilot,gpt-5.4,1.0,rosetta,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip/route add dst-address=10.10.10.0/24 type=blackhole,ok,346cd3fd1ca746c7,0,0,pilot
+copilot,gpt-5.4,1.0,rosetta,wifi-set-ssid,wireless,7.22+,writes-config,missing_arg,1,0,0.0,/interface/wifi/set [find default-name=wifi1] configuration.ssid=MyNet,ok,f234071a8a1dd3fc,0,0,pilot
+copilot,gpt-5.5,7.5,baseline,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip/route/add dst-address=10.10.10.0/24 type=blackhole,n/a,2cea060dd4b406d6,1,0,pilot
+copilot,gpt-5.5,7.5,baseline,wifi-set-ssid,wireless,7.22+,writes-config,missing_arg,1,0,0.0,/interface/wifi/set wifi1 configuration.ssid=MyNet,n/a,043dcc03a4bd46da,1,0,pilot
+copilot,gpt-5.5,7.5,rosetta,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,/ip/route add dst-address=10.10.10.0/24 type=blackhole,ok,56ac665f342deb2f,1,0,pilot
+copilot,gpt-5.5,7.5,rosetta,wifi-set-ssid,wireless,7.22+,writes-config,missing_arg,1,0,0.0,/interface/wifi/set wifi1 configuration.ssid=MyNet,ok,2c00ca974f14aced,1,0,pilot
