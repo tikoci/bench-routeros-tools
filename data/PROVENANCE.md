@@ -50,14 +50,17 @@ gold.
 Reruns of `run_live.py` are free when the cache is present.
 
 > **Corpus correction surfaced by the device:** `route-blackhole` gold was
-> `blackhole=yes`, but RouterOS 7.23 (CHR) rejects it (`expected end of command`)
-> and `type=blackhole` (`bad parameter type`); only the bare `blackhole` flag
-> creates the route. The gold was **corrected to the bare flag** on the
-> `agents/grounded-data-collection-agents` branch; see `live_chr_demo.csv`,
-> `docs/REPORT_LIVE_GPT.md` Finding 1, and the inline note in
-> `tasks/corpus.yaml`. Structural result CSVs (`data/results*.csv`, etc.) predate
-> this fix and should be regenerated with `./run_all.sh` on the next full run so
-> their `route-blackhole` labels reflect the corrected gold.
+> `blackhole=yes`, but the device rejects it (`expected end of command`) and
+> `type=blackhole`; only the bare `blackhole` flag creates the route. The gold
+> was **corrected to the bare flag** on the `agents/grounded-data-collection-agents`
+> branch; see `live_chr_demo.csv`, `docs/REPORT_LIVE_GPT.md` Finding 1, and the
+> inline note in `tasks/corpus.yaml`. **Independently re-verified via `quickchr
+> exec` (real CLI parser) on BOTH RouterOS 7.22.1 (the benchmark scope) and 7.23
+> — `data/blackhole_device_verify.csv`:** both `type=blackhole` and `blackhole=yes`
+> are rejected on both versions; only the bare flag creates an Active/static
+> route. Structural result CSVs (`data/results*.csv`, etc.) predate this fix and
+> should be regenerated with `./run_all.sh` on the next full run so their
+> `route-blackhole` labels reflect the corrected gold.
 
 The structural snapshots above were first captured while the benchmark lived
 under

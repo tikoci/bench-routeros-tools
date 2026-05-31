@@ -81,6 +81,15 @@ syntax change to this flag, and the rosetta corpus (aligned ~7.22) documents it
 as a flag — so this is very likely a latent error in the gold, not a 7.22→7.23
 regression.
 
+> **Independently re-verified on both versions** (`data/blackhole_device_verify.csv`,
+> via `quickchr exec` — real CLI parser, not `/console/inspect`). On **7.22.1**
+> (the benchmark's exact scope) *and* **7.23**: `type=blackhole` and
+> `blackhole=yes` are both **rejected** (no route created); only the bare
+> `blackhole` flag creates an Active/static route. The only cross-version
+> difference is the error string for `type=blackhole` (7.22.1: `expected end of
+> command`; 7.23: `bad parameter type`) — the rejection is identical. The
+> corrected gold is device-confirmed on the version the corpus targets.
+
 **Implication:** static gold/oracles silently encode human syntax assumptions
 that can be wrong. A scoped **device-grounded validation tier** is not a luxury —
 it is the only thing that caught both the model's win *and* the oracle's bug.

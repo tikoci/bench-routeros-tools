@@ -1,0 +1,7 @@
+version,form,command,accepted,route_created,device_message,tool
+7.22.1,type=blackhole,/ip/route add dst-address=10.10.11.0/24 type=blackhole,no,no,expected end of command (line 1 column 41),quickchr exec
+7.22.1,blackhole=yes,/ip/route add dst-address=10.10.12.0/24 blackhole=yes,no,no,expected end of command (line 1 column 50),quickchr exec
+7.22.1,bare-blackhole,/ip/route add dst-address=10.10.13.0/24 blackhole,yes,yes,(accepted; route Active+static),quickchr exec
+7.23,type=blackhole,/ip/route add dst-address=10.10.11.0/24 type=blackhole,no,no,bad parameter type (line 1 column 45),quickchr exec
+7.23,blackhole=yes,/ip/route add dst-address=10.10.12.0/24 blackhole=yes,no,no,expected end of command (line 1 column 50),quickchr exec
+7.23,bare-blackhole,/ip/route add dst-address=10.10.13.0/24 blackhole,yes,yes,(accepted; route Active+static),quickchr exec
