@@ -1,7 +1,7 @@
-"""Summarize the frontier-boxing live matrix for the REPORT §8 rewrite.
+"""Summarize the Claude frontier-boxing ladder for the live-report write-up.
 
-Reads data/live_matrix.csv (per-cell aggregate) and data/live_pilot.jsonl (raw
-per-run) and prints the specific cuts the report argues from:
+Reads data/live_ladder_matrix.csv (per-cell aggregate) and data/live_ladder.jsonl
+(raw per-run) and prints the specific cuts the report argues from:
 
   1. perfect-rate per model x condition, with the k denominator (the ladder).
   2. the route-blackhole crux cell across all models x conditions: modal label,
@@ -13,7 +13,7 @@ per-run) and prints the specific cuts the report argues from:
   5. cost per model.
 
 Usage:
-  .venv/bin/python harness/live/analyze_matrix.py
+  .venv/bin/python harness/live/analyze_ladder.py
 """
 from __future__ import annotations
 
@@ -36,13 +36,13 @@ COND_ORDER = ["baseline", "rosetta-context", "skills-context"]
 
 
 def load_matrix() -> list[dict]:
-    with open(DATA / "live_matrix.csv") as fh:
+    with open(DATA / "live_ladder_matrix.csv") as fh:
         return list(csv.DictReader(fh))
 
 
 def load_runs() -> list[dict]:
     rows = []
-    with open(DATA / "live_pilot.jsonl") as fh:
+    with open(DATA / "live_ladder.jsonl") as fh:
         for ln in fh:
             rows.append(json.loads(ln))
     return rows

@@ -87,7 +87,7 @@ def run_cells(targets) -> list[dict]:
 def rebuild(merged: list[dict]) -> None:
     fields = ["approach", "task", "model", "rep", "label", "syntax_valid",
               "n_cmds", "n_gold", "exit_code", "cost_usd", "prompt_hash"]
-    with open(DATA / "live_pilot.csv", "w", newline="") as fh:
+    with open(DATA / "live_ladder.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=fields, extrasaction="ignore")
         w.writeheader()
         w.writerows(merged)
@@ -105,17 +105,17 @@ def rebuild(merged: list[dict]) -> None:
             "modal_label": modal, "agreement": round(modal_n / len(sub), 2),
             "labels": "|".join(labels),
         })
-    with open(DATA / "live_matrix.csv", "w", newline="") as fh:
+    with open(DATA / "live_ladder_matrix.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(matrix_rows[0].keys()))
         w.writeheader()
         w.writerows(matrix_rows)
-    with open(DATA / "live_pilot.jsonl", "w") as fh:
+    with open(DATA / "live_ladder.jsonl", "w") as fh:
         for r in merged:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
 
 
 def main() -> None:
-    existing = [json.loads(l) for l in open(DATA / "live_pilot.jsonl")]
+    existing = [json.loads(l) for l in open(DATA / "live_ladder.jsonl")]
     print(f"[backfill] existing rows: {len(existing)}")
     new = run_cells(TARGETS)
     print(f"[backfill] new rows: {len(new)}")
@@ -134,7 +134,7 @@ def main() -> None:
     print("[backfill] rows per model:")
     for m, n in sorted(by_model.items()):
         print(f"    {m:30} {n}")
-    print(f"  wrote {DATA/'live_pilot.csv'}, live_pilot.jsonl, live_matrix.csv")
+    print(f"  wrote {DATA/'live_ladder.csv'}, live_ladder.jsonl, live_ladder_matrix.csv")
 
 
 if __name__ == "__main__":
