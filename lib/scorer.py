@@ -27,19 +27,39 @@ VERBS = {"add", "set", "remove", "print", "save", "disable", "enable", "export"}
 IDENTITY_ARGS = {
     "address", "dst-address", "src-address", "to-addresses", "mac-address",
     "vlan-id", "vlan-ids", "interface", "name", "gateway", "target", "ssid",
-    "servers", "dst-port", "to-ports", "list", "pvid",
+    "servers", "dst-port", "to-ports", "list", "pvid", "bridge",
 }
+
+_BARE_SEG = re.compile(r"^[a-z][a-z0-9-]*$")
 
 
 def _split(command: str):
+    """Return (canonical_slash_path, verb).
+
+    RouterOS treats space- and slash-separated menu paths as equivalent
+    (`/interface bridge port set` == `/interface/bridge/port/set`). Both forms
+    normalize here so the scorer doesn't penalize a valid space-form command as
+    a wrong path -- a fragility surfaced by live-agent output.
+    """
     toks = command.strip().split()
-    path = toks[0] if toks else ""
-    segs = [s for s in path.split("/") if s]
+    if not toks:
+        return "", None
+    segs = [s for s in toks[0].split("/") if s]
     verb = None
-    if segs and segs[-1] in VERBS:
+    if segs and segs[-1] in VERBS:  # slash form: /ip/route/add
         verb, segs = segs[-1], segs[:-1]
-    elif len(toks) > 1 and toks[1] in VERBS:
-        verb = toks[1]
+    if verb is None:
+        # space form: consume bare path segments until the verb or first arg.
+        for tk in toks[1:]:
+            if "=" in tk or tk.startswith("[") or tk.startswith('"'):
+                break
+            if tk in VERBS:
+                verb = tk
+                break
+            if _BARE_SEG.match(tk):
+                segs.append(tk)
+                continue
+            break
     return "/" + "/".join(segs), verb
 
 

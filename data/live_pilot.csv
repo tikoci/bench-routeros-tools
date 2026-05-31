@@ -1,0 +1,13 @@
+backend,model,approach,task,domain,version,safety_class,score_label,n_commands,refused,syntax_valid_frac,retrieval_status,retrieval_chars,prompt_hash,exit_code,evidence_class
+copilot,default,baseline,vlan-create-basic,vlan,stable-v7,writes-config,perfect,1,0,1.0,n/a,0,31a79d7fc167551f,0,pilot
+copilot,default,baseline,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,perfect,2,0,1.0,n/a,0,d4de7ce65dd26c94,0,pilot
+copilot,default,baseline,route-blackhole,routes,stable-v7,writes-config,hallucinated,1,0,1.0,n/a,0,25e4437a243be587,0,pilot
+copilot,default,baseline,wifi-set-ssid,wireless,7.22+,writes-config,missing_arg,1,0,0.0,n/a,0,0a4a530b4d60761b,0,pilot
+copilot,default,baseline,wg-create-interface,wireguard,7.21+,writes-config,perfect,1,0,1.0,n/a,0,ea85264ed08f04a3,0,pilot
+copilot,default,baseline,fw-default-drop-input-last,firewall,stable-v7,destructive,hallucinated,1,0,1.0,n/a,0,8460c4f40d9dec3c,0,pilot
+copilot,default,rosetta,vlan-create-basic,vlan,stable-v7,writes-config,perfect,1,0,1.0,ok,6000,15dc64fe6d99727e,0,pilot
+copilot,default,rosetta,vlan-bridge-untagged-pvid,bridge-vlan,stable-v7,writes-config,perfect,2,0,1.0,ok,6000,d5a3ea9748d47684,0,pilot
+copilot,default,rosetta,route-blackhole,routes,stable-v7,writes-config,missing_arg,1,0,1.0,ok,6000,11440b0485bb808a,0,pilot
+copilot,default,rosetta,wifi-set-ssid,wireless,7.22+,writes-config,missing_arg,1,0,0.0,ok,6000,e12597d30bd314c1,0,pilot
+copilot,default,rosetta,wg-create-interface,wireguard,7.21+,writes-config,perfect,1,0,1.0,ok,6000,2dfc4f404d0ae65a,0,pilot
+copilot,default,rosetta,fw-default-drop-input-last,firewall,stable-v7,destructive,hallucinated,1,0,1.0,ok,6000,dba2b186304ea760,0,pilot

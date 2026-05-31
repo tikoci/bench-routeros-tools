@@ -9,3 +9,4 @@ results/
 *.log
 chr-*.img
 chr-*.qcow2
+data/live_cache/

@@ -39,6 +39,13 @@ between them in numbers instead of intuition.
 
 ```sh
 # from the repo root
+uv venv
+uv pip install -e .
+```
+
+Portable fallback:
+
+```sh
 python3 -m venv .venv
 .venv/bin/pip install -e .
 ```
@@ -70,6 +77,25 @@ Individual metrics:
 .venv/bin/python harness/tool_ambiguity.py
 # ...etc
 ```
+
+## Agent workflow shortcuts
+
+This repo includes workspace prompt files for the next benchmark-maintenance and
+live-verification steps:
+
+| Prompt | Use |
+|---|---|
+| [`/fleet`](.github/prompts/fleet.prompt.md) | Implement or run a small, budget-bounded live benchmark fleet. Start with dry-run or pilot mode before spending many model calls. |
+| [`/refresh-benchmark-snapshots`](.github/prompts/refresh-benchmark-snapshots.prompt.md) | Refresh committed MCP, rosetta, or routeros-skills snapshots and update provenance. |
+| [`/routeros-benchmark-analysis`](.github/prompts/routeros-benchmark-analysis.prompt.md) | Interpret CSV outputs or live-pilot artifacts while keeping structural and live evidence separate. |
+
+Path-scoped instructions live under `.github/instructions/`. The important ones
+for future live work are
+[`live-agent-harness.instructions.md`](.github/instructions/live-agent-harness.instructions.md),
+[`python-benchmark-workflow.instructions.md`](.github/instructions/python-benchmark-workflow.instructions.md),
+[`benchmark-data.instructions.md`](.github/instructions/benchmark-data.instructions.md),
+and
+[`routeros-grounding.instructions.md`](.github/instructions/routeros-grounding.instructions.md).
 
 ## How the inputs are captured (reproducibility)
 
@@ -103,3 +129,55 @@ RouterOS syntax (it caught one authoring error during development).
 See [`REPORT.md`](REPORT.md) for the full analysis. See
 [`docs/LIVE_AGENT_HARNESS.md`](docs/LIVE_AGENT_HARNESS.md) for the planned
 `claude` / `copilot` live-run adapter seam.
+
+## Live pilot (landed)
+
+A first **grounded live-agent pilot** is now committed. It runs `copilot -p`
+(the only live backend available in the dev environment), contrasts `baseline`
+vs `rosetta` context over 6 representative tasks, caches every call by prompt
+hash, and adds a closed-loop CHR demo via `quickchr exec`.
+
+- Harness: [`harness/live/run_live.py`](harness/live/run_live.py)
+  (`backends.py`, `contexts.py`, `adapter.py`).
+- Artifacts: `data/live_pilot.csv`, `data/live_pilot.jsonl`,
+  `data/live_chr_demo.csv` (`data/live_cache/` is git-ignored).
+- Findings: [`docs/REPORT_LIVE.md`](docs/REPORT_LIVE.md) — clearly marked **PILOT
+  evidence (n=6, single backend)**, kept separate from structural metrics.
+
+The headline grounded result: on `route-blackhole` the device (CHR 7.23)
+**rejected the corpus gold** (`blackhole=yes`) and **accepted the rosetta-guided
+output** (bare `blackhole` flag) — the static scorer had it backwards. Only
+device execution surfaced the oracle bug. This is the concrete case for an
+explain → validate → **run** loop and for scoped execution CLIs (`quickchr` /
+`centrs`) as a real validation tier rather than a 166-tool MCP firehose.
+
+Reproduce (uses cache, no live calls if present):
+
+```bash
+.venv/bin/python harness/live/run_live.py --dry-run   # prompts only
+.venv/bin/python harness/live/run_live.py             # writes data/live_pilot.*
+```
+
+## Future live benchmark direction
+
+The next milestone is not a large model bake-off. It is a cheap, auditable live
+verification loop that proves the harness can ask a local CLI-backed agent for
+RouterOS commands, score them, validate them, and save enough metadata to replay
+or explain the result.
+
+The preferred path is:
+
+1. Build `prompt-only` dry runs from `tasks/corpus.yaml` and `approaches.yaml`.
+2. Run a tiny `live-generation` pilot: one backend, 3 to 5 tasks, no execution on
+  a router, final commands scored and syntax-validated.
+3. Expand to a small `mini-matrix`: 2 to 3 approaches across a fixed task subset,
+  capped at roughly 12 model calls by default.
+4. Add `closed-loop-chr` scenarios only after prompt construction, result
+  capture, and CLI invocation are stable. Use disposable CHR fixtures,
+  `/console/inspect` pre-validation, and readback checks.
+
+`claude -c` or `copilot -c` may be useful for early pilots, but benchmark-quality
+runs should prefer a non-interactive command that prints an answer and exits.
+Every live result should record the exact command, prompt hash, stdout, stderr,
+exit code, backend label, final commands, validation errors, retries, and whether
+the run is pilot evidence or benchmark-quality data.
