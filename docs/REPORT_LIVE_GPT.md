@@ -70,7 +70,7 @@ Cross-referenced against CHR 7.23 device truth (`data/live_chr_demo.csv`):
 | `blackhole` (bare flag) | **only** copilot-*default*+rosetta (`REPORT_LIVE.md` Finding 1) | **accepted** — route created Active+static |
 
 So among the **explicitly versioned** models tested here — gpt-4.1, gpt-5-mini,
-gpt-5.5 (both approaches) and Claude Haiku/Sonnet/Opus-4-7 (all three
+gpt-5.4, gpt-5.5 (both approaches) and Claude Haiku/Sonnet/Opus-4-7 (all three
 approaches) — **none** reached the device-valid form. The only cell that did,
 across *every* run in the project, was the earlier pilot's **copilot-default
 model with rosetta context** (1 of ~30+ cells), and only with retrieval. And the
@@ -78,6 +78,15 @@ corpus **gold itself was device-invalid** on 7.23. This is the strongest argumen
 in the whole project for (a) **device-in-the-loop validation** (quickchr/CHR), and
 (b) **correcting the corpus gold** to the bare-flag form. A purely textual
 benchmark would have scored everyone against a wrong answer.
+
+> **Static validation is necessary but not sufficient.** Regenerating the
+> benchmark (`./run_all.sh`, `method=chr:inspect`) shows `/console/inspect`
+> accepts **both** `blackhole=yes` and bare `blackhole` as "path ok" — i.e. the
+> static schema check *did not* catch the flag-vs-value error. Only **runtime
+> exec** on a live CHR (`quickchr exec`) rejected `blackhole=yes`. This sharpens
+> the validation-tier thesis: inspect/schema validation is a cheap first gate, but
+> a scoped **runtime** execution tier (quickchr/centrs) catches parser-level
+> errors that schema introspection misses.
 
 > **Done in this change:** `route-blackhole` gold was corrected from
 > `blackhole=yes` to the bare `blackhole` flag in `tasks/corpus.yaml`, with an
