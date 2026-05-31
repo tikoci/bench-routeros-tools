@@ -172,9 +172,19 @@ class Chr:
         if segs and segs[-1] in verbs:
             verb = segs[-1]
             segs = segs[:-1]
-        # ... or the second whitespace token (/ip/route add ...)
-        elif len(tokens) > 1 and tokens[1] in verbs:
-            verb = tokens[1]
+        else:
+            # ... or a later bare whitespace token. RouterOS menus are
+            # interchangeably slash- or space-separated, so intervening bare
+            # tokens are MORE of the menu path (/ip route add, /interface bridge
+            # port set). Walk tokens[1:] until the verb or the first arg/selector;
+            # otherwise multi-segment space-form paths skip arg validation.
+            for tok in tokens[1:]:
+                if tok in verbs:
+                    verb = tok
+                    break
+                if "=" in tok or tok.startswith(("[", "!", '"')):
+                    break
+                segs.append(tok)
         # walk the tree
         prefix = ""
         for i, seg in enumerate(segs):

@@ -160,11 +160,12 @@ obvious objection is *"a bigger/better base model would just know the right
 syntax."* A separate Claude run boxes that in. It sweeps a **4-rung model ladder**
 — Haiku 4.5 → Sonnet 4.6 → Opus 4.7 → **Opus 4.8 (frontier)** — across three
 context conditions (`baseline` / `rosetta-context` / `skills-context`), over the
-same 6-task subset, with **each cell repeated `k=3`** so a single noisy
-generation can't masquerade as signal. Artifacts: `data/live_ladder*.{csv,jsonl}`,
-analysis via `harness/live/analyze_ladder.py`. (Opus 4.8 is a `route-blackhole`
-crux + easy-task sanity **spot-check** — the rest of its grid was lost to a CLI
-session limit; see `data/PROVENANCE.md`.)
+same 6-task subset, with **each cell repeated `k=3`** — the **full 4×3×6 grid,
+216 generations**. Artifacts: `data/live_ladder*.{csv,jsonl}`, analysis via
+`harness/live/analyze_ladder.py`. (The `syntax_valid` column was re-validated with
+`harness/live/revalidate_ladder_syntax.py` after a `lib/chr.py` fix: the merged
+validator briefly skipped argument checks on multi-segment **space-form** paths
+like `/ip route add …`, falsely passing `type=blackhole`; corrected here.)
 
 **The crux is invariant to scale.** Of **36** `route-blackhole` generations across
 the whole ladder, only **2** reached the device-valid bare `blackhole` flag — and
@@ -191,13 +192,14 @@ trend line closes it. A `validate → run` tier does.
 read suggested `rosetta-context` "moved Sonnet to drop `type=blackhole`"; at
 `k=3` that cell is **3/3 `type=blackhole`** — the earlier flip was noise. Live
 single-shot cells are unreliable; report **column shapes and stability bands**,
-not individual cells. (10 of 58 ladder cells disagreed across their 3 repeats,
-concentrated in the weakest model.)
+not individual cells. (**16 of 72** ladder cells disagreed across their 3 repeats —
+concentrated in Haiku and at the `route-blackhole` boundary where models
+occasionally slip between `type=blackhole`, `/routing/route`, and the bare flag.)
 
 **Secondary — augmentation value is model-dependent, not a constant.**
-`rosetta-context` lifted Haiku's syntax-valid fraction to **18/18** (it eliminated
-*fabrication*, even when not gold-perfect) and its perfect rate 8→14/18; for
-Sonnet and Opus the same context was net-neutral. `skills-context` was
+`rosetta-context` lifted Haiku's syntax-valid fraction to **17/18** (it eliminated
+nearly all *fabrication*, even when not gold-perfect) and its perfect rate 8→14/18;
+for Sonnet and Opus the same context was net-neutral. `skills-context` was
 neutral-to-negative across the board: the skill body's worked examples induced
 **over-specification** (e.g. adding `in-interface-list=WAN` to a dst-nat rule),
 which the strict scorer marks `hallucinated`. Practical rule: spend augmentation

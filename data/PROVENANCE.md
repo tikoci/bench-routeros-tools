@@ -36,14 +36,13 @@ gpt-5.5 = 7.5×; the two paid models ran only the two crux tasks to cap spend.
 
 The **ladder** (`live_ladder*`) is the cross-*scale* companion: isolated
 `claude -p` across Haiku 4.5 → Sonnet 4.6 → Opus 4.7 → Opus 4.8, three context
-conditions, the 6-task subset, **`k=3` repeats per cell** for a stability band
-(REPORT_LIVE.md Finding 6; summarize with `harness/live/analyze_ladder.py`).
-Total spend ~$6.04. **Caveat:** Opus 4.8 is a `route-blackhole` crux +
-`vlan-create-basic` sanity **spot-check only** — the rest of its grid (54 cells)
-was lost to a `claude` CLI session limit mid-run; `harness/live/backfill_cells.py`
-merged targeted re-runs of the recoverable cells (Opus 4.7 `wg-add-peer` + the
-4.8 spot-check). Ladder rows are scored against the **corrected** bare-`blackhole`
-gold.
+conditions, the 6-task subset, **`k=3` repeats per cell** — the **full 4×3×6 grid
+(216 generations)**, summarized with `harness/live/analyze_ladder.py`
+(REPORT_LIVE.md Finding 6). The first run lost Opus 4.8 entirely to a `claude`
+session limit; `harness/live/backfill_cells.py` re-ran and merged the full 4.8
+grid once the limit reset. Rows are scored against the **corrected**
+bare-`blackhole` gold; the `syntax_valid` column was re-validated
+(`revalidate_ladder_syntax.py`) after a `lib/chr.py` space-form arg-check fix.
 
 `data/live_cache/` (raw cached model output, keyed by prompt hash) is
 **git-ignored**: it is regenerable and avoids committing model output verbatim.

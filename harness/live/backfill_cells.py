@@ -26,18 +26,15 @@ from lib.scorer import predict_label
 
 DATA = Path(__file__).resolve().parents[2] / "data"
 
-# (model, approach, task, repeats). Defaults fill the 2026-05-31 limit gap.
+# (model, approach, task, repeats). TARGETS re-runs specific cells and merges,
+# dropping superseded + session-limited rows. Default below fills the **full
+# Opus 4.8 grid** (the 2026-05-31 run lost 4.8 entirely to a session limit; a
+# later pass spot-checked only the route-blackhole crux). This completes the
+# frontier row at k=3, replacing the earlier 4.8 spot-check cells uniformly.
 TARGETS = [
-    # Opus 4.7: wg-add-peer cells lost to the session limit -> clean full task.
-    ("claude-opus-4-7", "baseline", "wg-add-peer", 3),
-    ("claude-opus-4-7", "rosetta-context", "wg-add-peer", 3),
-    ("claude-opus-4-7", "skills-context", "wg-add-peer", 3),
-    # Opus 4.8 spot-check: the route-blackhole crux across conditions ...
-    ("claude-opus-4-8", "baseline", "route-blackhole", 3),
-    ("claude-opus-4-8", "rosetta-context", "route-blackhole", 3),
-    ("claude-opus-4-8", "skills-context", "route-blackhole", 3),
-    # ... plus an easy-task sanity that the model is functioning at all.
-    ("claude-opus-4-8", "baseline", "vlan-create-basic", 2),
+    ("claude-opus-4-8", approach, task, 3)
+    for task in rl.DEFAULT_TASKS
+    for approach in rl.APPROACHES
 ]
 
 
