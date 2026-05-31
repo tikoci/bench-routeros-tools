@@ -5,6 +5,11 @@
 > demo on one disposable RouterOS 7.23 instance. These results are directional
 > evidence to guide future work — not statistically meaningful scores. See
 > [REPORT.md](../REPORT.md) for the structural benchmark and its caveats.
+>
+> **Companion:** [`REPORT_LIVE_GPT.md`](REPORT_LIVE_GPT.md) extends this to a
+> **cross-vendor** pilot (GPT via Copilot CLI vs Claude via Claude Code) and
+> shows `route-blackhole` fails for *every* model/approach on *both* vendors —
+> which is why the corpus gold was corrected to the device-valid bare flag.
 
 ## What this adds over the structural benchmark
 
