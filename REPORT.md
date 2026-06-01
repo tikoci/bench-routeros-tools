@@ -215,6 +215,13 @@ For the general problem of *giving AI agents better RouterOS information*:
    visible symptom; the **selection ambiguity and destructive-tool proximity**
    are the deeper problem. Prefer a **small, scoped execution surface** (a handful
    of verbs over a canonicalized `{path, verb, args}`) gated by validation.
+   [`centrs`](https://github.com/tikoci/centrs) is the in-progress tikoci
+   implementation of exactly this — a ~5-verb stdio MCP
+   (`centrs_explain`/`validate`/`retrieve`/`execute`/`devices`) over a
+   canonicalize → validate → run core, with the WinBox CDB as a per-device
+   read/write allowlist. See [`docs/AGENTIC_FUTURES.md`](docs/AGENTIC_FUTURES.md)
+   for the design-alignment write-up and the plan to benchmark it against
+   mikrotik-mcp.
 
 3. **Adopt an explain → validate → run split.** rosetta/skills plan and the
    `/console/inspect` validator (proven here: catches bad paths and hallucinated

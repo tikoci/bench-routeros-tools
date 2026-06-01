@@ -64,7 +64,7 @@ Related tikoci projects under test/reference:
 [routeros-skills](https://github.com/tikoci/routeros-skills) ·
 [quickchr](https://github.com/tikoci/quickchr) (CHR/QEMU) ·
 [restraml](https://github.com/tikoci/restraml) (REST schema) ·
-[centrs](https://github.com/tikoci/centrs) (MAC-Telnet runner) ·
+[centrs](https://github.com/tikoci/centrs) (scoped-verb RouterOS MCP / runner — the in-progress alternative to a 166-tool execution MCP) ·
 [m2ir](https://github.com/tikoci/m2ir) (binary formats) ·
 external [`mikrotik-mcp`](https://github.com/jeff-nasseri/mikrotik-mcp).
 

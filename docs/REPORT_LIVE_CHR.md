@@ -73,8 +73,12 @@ the tier above it:
    correctness is actually decided.
 
 Concretely: `quickchr` is validated here as that execution tier (boot/reuse CHR,
-`exec`, readback, `clean`); a parallel `centrs` adapter (not installed in this
-env) is the natural follow-up for multi-device intents. And the right tier
+`exec`, readback, `clean`); `centrs` (not installed in this env) now realizes the
+same tier as a scoped-verb MCP (`centrs_explain`/`validate`/`retrieve`/`execute`)
+over a canonicalize → validate → run core — in-progress, CHR-tested on its own
+side, and the direct alternative to the 166-tool firehose; wiring it into this
+harness as a measured approach is the follow-up (see `docs/AGENTIC_FUTURES.md`).
+And the right tier
 **varies by task** — stateless syntax needs none of this; version-new menus and
 flag-shape need retrieval; anything stateful/destructive needs
 device-validate-before-apply.

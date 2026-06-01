@@ -229,10 +229,13 @@ Concretely for this project:
 
 - **`quickchr` as the execution tier** is validated here: boot/reuse a CHR,
   `exec` a candidate, read back state, `clean`. It directly grounded Findings 1–2.
-- **`centrs` (not installed in this environment)** is the analogous tier for
-  multi-node / container topologies; future work should add a `centrs` adapter
-  parallel to the quickchr demo so multi-device intents (routing between nodes,
-  bridge/VLAN across hosts) can be device-grounded too.
+- **`centrs` (not installed in this environment)** now realizes this tier as a
+  product: a scoped-verb stdio MCP (`centrs_explain`/`validate`/`retrieve`/
+  `execute`/`devices`) over a canonicalize → validate → run core, in-progress and
+  CHR-tested on its own side — the direct alternative to the 166-tool MCP, citing
+  this report as its rationale. Follow-up is to wire it into this harness as a
+  measured approach and to add a multi-node/container adapter (routing between
+  nodes, bridge/VLAN across hosts). See `docs/AGENTIC_FUTURES.md`.
 - **Right approach varies by task** (the user's framing): stateless syntax →
   base model alone (Finding 3); version-new menus / flag shape → distilled
   retrieval (Findings 1, 4); anything stateful or destructive → mandatory

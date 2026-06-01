@@ -78,8 +78,24 @@ knowledge — and replaces the 166-tool firehose with a canonicalized
 1. **Stand up the scoped-execution tier as a first-class thing.** `quickchr exec`
    already grounded Findings 1–2; promote it from demo to a stable 3–5 verb
    contract (`exec`, `snapshot`, `readback`, `clean`) an agent can drive against a
-   disposable CHR. Add a `centrs` adapter for multi-node/container topologies so
-   multi-device intents (inter-node routing, cross-host VLANs) can be grounded too.
+   disposable CHR.
+   - **This is now being realized in [`centrs`](https://github.com/tikoci/centrs).**
+     Its `mcp` surface (`commands/mcp/`, `src/mcp/`; in-progress, Phase 1
+     CHR-tested against CHR 7.23) is a direct, grounded implementation of the
+     architecture this report recommends — and it cites this benchmark
+     (`REPORT.md`, `REPORT_LIVE_CHR.md`) as its design rationale. It exposes a
+     handful of **verb** tools — `centrs_explain` (offline canonicalize →
+     `{path, verb, args}`), `centrs_validate` (dry-run `:parse` **+**
+     `/console/inspect`, never mutates), `centrs_retrieve`, `centrs_execute`,
+     `centrs_devices` — over the same canonicalize → validate → run core the CLI
+     uses, **not one tool per RouterOS command.** That is the explicit answer to
+     the 166-tool `mikrotik-mcp` firehose (REPORT.md §2/§5): ~5 tools + 2
+     resources instead of 166 always-on schemas, near-zero tool-selection
+     ambiguity, and a CDB-as-allowlist safety model (per-device `mcp=ro|rw` +
+     `confirm:true`) that closes the destructive-proximity and plaintext-credential
+     hazards the bench flagged. `centrs_validate` is the bench's gold-bug catcher
+     promoted to a first-class **dry-run tool**. A multi-node/container adapter
+     (inter-node routing, cross-host VLANs) remains the natural follow-on.
 2. **Build a distilled-retrieval context builder and measure it against raw-doc
    injection.** Hand the model a clean property/flag/version table, not a dump of
    search hits. REPORT_LIVE.md F4 and the GPT F4 both predict this beats the
@@ -94,11 +110,59 @@ knowledge — and replaces the 166-tool firehose with a canonicalized
    wireguard underspecified refusal) and re-run it as base models ship — with
    **k≥3 repeats and stability bands** (single-shot live cells are noise; F6
    corrected a prior single-shot over-claim). This converts a one-time pilot into
-   a tracking signal for "did the gap actually close?"
+   a tracking signal for "did the gap actually close?" When the scoped-MCP tier
+   exists as a product (it now does, in `centrs` — see #1), add it as a measured
+   *approach* alongside `mikrotik-mcp`; the plan is below.
 5. **Add adaptive augmentation.** Detect *when* to inject context — weak model or
    version-new task → inject; strong model on common syntax → withhold (it mostly
    adds over-specification risk). A static "always paste rosetta" policy is
    provably suboptimal for strong models (F6 secondary; GPT F3).
+
+## Plan: benchmark `centrs` as the realized scoped-execution tier
+
+`centrs` is the first concrete artifact this benchmark can test *as the
+recommended architecture*, head-to-head against the 166-tool `mikrotik-mcp`. The
+goal is not to re-prove the model-side trap findings — it is to **measure whether
+the scoped-verb MCP actually delivers the cost/ambiguity/safety wins this report
+predicts, and whether its `centrs_validate` tier catches the traps generation
+misses.** Sequenced so it tracks centrs' own maturity (its `docs/MATRIX.md` is
+the readiness signal):
+
+1. **Gate on maturity, not calendar.** Start when centrs' `mcp` surface is
+   `CHR-passed` for Phase 1 reads/validate **and** `execute` over a second
+   transport (native-api) is stable — i.e. the validate→run path is real on a
+   device, not just `rest-api`. Until then this is design review only.
+2. **Add `centrs-mcp` as a 7th approach** next to `mcp` (mikrotik-mcp) in
+   `approaches.yaml`, and re-run the **structural** metrics unchanged so the
+   comparison is apples-to-apples:
+   - **token/context cost** (`data/token_cost.csv`): 5 tool schemas, 2 resources,
+     and server instructions vs. mikrotik-mcp's ~28.2K always-on tokens. Predict
+     an order-of-magnitude drop.
+   - **tool-selection ambiguity** (`data/tool_ambiguity.csv`): with 5 verbs the
+     "36/166 match, 62% top-3" hazard should collapse toward unambiguous. Confirm.
+   - **capability/safety matrix** (`data/capability_matrix.csv`): centrs is the
+     *only* executor with a dry-run (`centrs_validate`), a declarative allowlist
+     (CDB), a per-device write gate (`mcp=rw`), and no-plaintext-credentials —
+     vs. mikrotik-mcp's 27 destructive tools with no dry-run. This row is where
+     centrs should dominate, and it is the bench's sharpest argument.
+3. **Drive the known-trap set *through the tier*, not just the model.** For each
+   frozen trap (blackhole bare-flag, dst-nat over-spec, wifi 7.22 shift, wireguard
+   underspecified), run `centrs_explain → centrs_validate → centrs_execute` against
+   a disposable CHR and assert the **validate tier rejects the bad form before any
+   write** even when the generating model emitted it. This measures the *floor the
+   tier provides*, independent of model quality — the load-bearing claim of this
+   whole document.
+4. **Reuse centrs' own harness shape.** centrs ships `test/integration/mcp.test.ts`
+   (boots CHR via `@tikoci/quickchr`, registers a throwaway CDB, drives an
+   in-process MCP client over stdio). The bench's live harness can either spawn
+   `bunx @tikoci/centrs mcp` over stdio or reuse that in-process client pattern —
+   no new transport code needed. Pin RouterOS **7.22.1** (this bench's scope) plus
+   a 7.23 cross-check, since centrs' own examples already run on 7.23.
+5. **Report the delta, with bands.** Same discipline as everywhere else: k≥3,
+   stability bands, column shapes. The expected headline is "centrs-mcp matches
+   mikrotik-mcp's *executor* capability at a fraction of the token/ambiguity cost
+   **and** adds a validate gate mikrotik-mcp structurally cannot" — but that is a
+   prediction to be measured, not asserted.
 
 ## Methodology notes for whoever benchmarks this next
 
