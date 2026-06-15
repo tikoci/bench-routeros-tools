@@ -7,7 +7,8 @@
 > This document answers the next question the user posed: *"given what we now
 > measured, where should RouterOS agentic-AI tooling go — extend what exists, or
 > build something new?"* Every claim here is anchored to a finding in those
-> reports; this is a synthesis, not new data.
+> reports — a synthesis, with one exception: the *Vendor-native docs* section
+> adds a small new probe (`harness/vendor_oracle_probe.py`, 2026-06-15).
 
 ## TL;DR — five things the measurements changed our mind about
 
@@ -17,10 +18,13 @@
    0/9 correct)** *and* across **every GPT tier** — invariant to both vendor and
    scale. *Don't architect on the assumption that the next base model fixes it.*
    (REPORT_LIVE.md Finding 6; REPORT_LIVE_GPT.md Finding 1.)
-2. **Static validation is necessary but not sufficient.** `/console/inspect`
-   schema checks accepted a gold command (`blackhole=yes`) the real device
-   rejects — an *inspect-vs-runtime gap*. Only device execution caught both the
-   model's win and the oracle's bug. (REPORT_LIVE.md Finding 1.)
+2. **Static validation is necessary but not sufficient — and *which* static
+   validation matters.** Name-level `/console/inspect` accepted a gold command
+   (`blackhole=yes`) the real device rejects — an *inspect-vs-runtime gap*
+   (REPORT_LIVE.md Finding 1). But the new probe shows MikroTik's own
+   *type-annotated* CLI Reference closes that specific gap **offline** (`switch` ≠
+   `bool`); what remains device-only is *intent* (silent over-specification), not
+   *form*. (See "Vendor-native docs" below; `data/vendor_oracle_probe.csv`.)
 3. **Execution should be a small, scoped surface — not 166 always-on tools.** The
    token cost is the visible symptom; selection ambiguity and destructive-tool
    proximity are the deeper hazard. (REPORT.md §2, §5.)
@@ -57,7 +61,7 @@ This sharpens REPORT.md recommendation #3 with the live evidence. Build the agen
 | Tier | What | Cost / risk | Catches | Misses |
 |---|---|---|---|---|
 | **0 · Explain** | rosetta-style retrieval (command/property/flag shape, version scope), **distilled** | ~6K always-on tokens, read-only | vocabulary, version scope | nothing it isn't asked; formatting discipline |
-| **1 · Validate (static)** | `/console/inspect` / rosetta-static schema check | cheap, no device | bad paths, hallucinated properties | parser-level errors, state dependencies, oracle bugs |
+| **1 · Validate (static)** | typed schema check: vendor CLI-ref **types** + `/console/inspect` | cheap, no device | bad paths, hallucinated names, **switch-form / enum-value / num-value / missing-mandatory** (with vendor types) | intent/over-spec, state dependencies, oracle bugs |
 | **2 · Run (scoped device)** | 3–5 verb CLI (`exec`/`snapshot`/`readback`/`clean`) on a **disposable** CHR (`quickchr`) or container topology (`centrs`) | a VM/boot, but isolated & reversible | *everything* — the only correctness ground truth | (it is the ground truth) |
 
 **Orchestration policy** (route by task class, the user's "right approach varies"):
@@ -72,6 +76,90 @@ This sharpens REPORT.md recommendation #3 with the live evidence. Build the agen
 This keeps the powerful-but-risky execution tier behind cheap, safe, high-coverage
 knowledge — and replaces the 166-tool firehose with a canonicalized
 `{path, verb, args}` runner small enough to audit.
+
+## Vendor-native docs (manual.mikrotik.com): a free Tier-0/1 upgrade, not a model fix
+
+*New probe, 2026-06-15 — `harness/vendor_oracle_probe.py` → `data/vendor_oracle_probe.csv`;
+the one part of this doc backed by data collected after the original reports.*
+
+MikroTik's docs moved to Docusaurus and now publish what an agent pipeline wants:
+`/llms.txt` + `/llms-full.txt`, per-page raw `.md`, and — the load-bearing part —
+a **CLI Reference generated from `/console/inspect` with the argument *types*
+rendered inline** (`<ArgTableRow arg="blackhole" typ="switch">`; a ~30-entry type
+legend: `bool`, `switch`, `num`, `enum`, `address`, …). There is not yet a
+standalone `inspect.json`; the structured data lives in the `.md`. This is a new
+context **source**, not a new model, and it lands on exactly two tiers: **Tier 0
+(Explain)** as vendor-official retrieval over the same corpus rosetta indexes, and
+**Tier 1 (Validate, static)** as a vendor-official *typed* schema.
+
+The sharp question for Tier 1: does the published type info close the
+**inspect-vs-runtime gap** (F1), where name-level `/console/inspect` accepted the
+device-rejected `blackhole=yes`? The probe builds two oracles from the *same*
+vendor schema and runs the frozen known-trap set through both:
+
+| Trap (mode) | name-level (≈ inspect) | type-level (vendor types) | device | intent |
+|---|---|---|---|---|
+| `type=blackhole` (fabricated name) | invalid | invalid | invalid | ✗ |
+| `blackhole=yes` (**switch-form**) | **valid** | **invalid** | invalid | ✗ |
+| `blackhole` bare (correct) | valid | valid | valid | ✓ |
+| `metric=1` (fabricated name) | invalid | invalid | invalid | ✗ |
+| wg peer `allowed-ips=…` (Linux-name fabrication) | invalid | invalid | invalid | ✗ |
+| wg peer, no `allowed-address` (**missing-mandatory**) | **valid** | **invalid** | invalid | ✗ |
+| `check-gateway=yes` on route (**enum-value**) | **valid** | **invalid** | invalid | ✗ |
+| `/ip/dns/static … type=A6` (**enum-value**) | **valid** | **invalid** | invalid | ✗ |
+| wg `listen-port=https` (**num-value**) | **valid** | **invalid** | invalid | ✗ |
+| dst-nat + `in-interface-list=WAN` (**over-spec**) | valid | valid | valid | ✗ |
+
+- **name-level (type-blind, the way the bench consumes `/console/inspect`): 5/10**
+  agreement with device well-formedness. It catches fabricated property *names*
+  (`type`, `metric`, `allowed-ips`) — inspect already does
+  (`command_validity.csv`) — but **passes every well-named-but-malformed value**
+  (`blackhole=yes`, `check-gateway=yes`, `type=A6`, `listen-port=https`) because
+  the *name* is real. That is F1, reproduced and generalized.
+- **type-level (the vendor type annotations): 10/10.** Four mechanisms the name
+  list cannot see, all read straight off the published types: `switch` ("bare
+  flag, no `=value`" → `blackhole=yes`), `mandatory="1"` (missing
+  `allowed-address`), `enum (…)` membership (`check-gateway=yes`, `type=A6`), and
+  `num` shape (`listen-port=https`). **Five form-gaps closed offline, no device.**
+  The `switch` ≠ `bool` distinction is real and load-bearing: in the same
+  `/ip/route` table `blackhole` is `switch` while `suppress-hw-offload` is `bool`,
+  and `/ip/dns allow-remote-requests` (the `=yes` gold) is `bool` — so the oracle
+  rejects `blackhole=yes` but keeps `allow-remote-requests=yes`. Note the teaching
+  pair: `type=blackhole` is a *fabricated name* on `/ip/route` (no `type` prop),
+  while `type=A6` is a *real prop with a bad enum value* on `/ip/dns/static` — the
+  type layer is what tells them apart.
+- **The residual is intent, not form.** The over-spec dst-nat command uses only
+  real, correctly-typed properties; it **parses and runs** (device = valid) — so
+  *no* static oracle, and not even a device dry-run, flags it. It is wrong only
+  against the *task*. That is the Tier-2 job (readback/semantics), and it is why
+  "validate" ≠ "correct."
+
+*Grounding:* the three `blackhole` rows are device-replayed
+(`blackhole_device_verify.csv`, CHR 7.22.1 + 7.23); the other seven are derived
+from the vendor schema + RouterOS parser behavior and are the device-replay
+backlog (the "pick up tests later" set). Read-only-set and a second `switch` arg
+are held back pending that replay — they hinge on whether `/console/inspect`
+lists read-only names, which only the device settles.
+
+**Does it change anything for a middle model like Sonnet?** The answer splits the
+way F1/F6 predict:
+
+- **Generation side:** the gains better docs could give Sonnet concentrate on
+  *fabricated names* — the mode the oracles (and a careful model) already catch.
+  The two modes that actually bite — the `switch`-form parser trap and silent
+  over-spec — are **not** fixed by handing the model nicer docs; the ladder showed
+  retrieval helps the weak end and over-specifies the strong end. Predicted effect
+  of feeding Sonnet the vendor `.md`: a modest drop in fabrication, little movement
+  on the parser nuance. *This model-side A/B is the still-unmeasured piece; it
+  belongs at the Sonnet rung — the augmentation crossover — and is the natural next
+  run.*
+- **Validation side (the real win):** the change is not "Sonnet gets smarter," it
+  is "**the cheap static tier gets a free upgrade.**" A Tier-1 validator built on
+  the vendor *typed* schema is strictly better than the name-level
+  `/console/inspect` check — it closed all 5 form-gaps here at zero device cost.
+  Architecture consequence: **Tier 1 should consume the vendor *types*, not just
+  inspect's name list**, and `centrs_validate` (already `:parse` + `/console/inspect`)
+  should fold the published `switch` / `mandatory` annotations into its dry-run.
 
 ## What to build or change next (concrete, tikoci-mapped)
 
@@ -100,7 +188,10 @@ knowledge — and replaces the 166-tool firehose with a canonicalized
    injection.** Hand the model a clean property/flag/version table, not a dump of
    search hits. REPORT_LIVE.md F4 and the GPT F4 both predict this beats the
    current approach; it deserves a dedicated live A/B. (rosetta owns the data;
-   restraml owns the enum/attribute schema that would feed the table.)
+   restraml owns the enum/attribute schema that would feed the table.) The new
+   vendor CLI-Reference **types** are a ready-made distilled property/type table,
+   and its raw `.md` is the obvious *raw* arm for this A/B — run it at the Sonnet
+   rung (see *Vendor-native docs*).
 3. **Make pre-apply device validation a default gate, not an option.** Any agent
    that mutates RouterOS should be required to round-trip a candidate through Tier
    1+2 before applying. The blackhole case shows even the *gold author* was wrong;
@@ -110,7 +201,9 @@ knowledge — and replaces the 166-tool firehose with a canonicalized
    wireguard underspecified refusal) and re-run it as base models ship — with
    **k≥3 repeats and stability bands** (single-shot live cells are noise; F6
    corrected a prior single-shot over-claim). This converts a one-time pilot into
-   a tracking signal for "did the gap actually close?" When the scoped-MCP tier
+   a tracking signal for "did the gap actually close?" `harness/vendor_oracle_probe.py`
+   is the **model-free seed** of this set — the same traps run through the static
+   oracles; the model-side ladder is the other half. When the scoped-MCP tier
    exists as a product (it now does, in `centrs` — see #1), add it as a measured
    *approach* alongside `mikrotik-mcp`; the plan is below.
 5. **Add adaptive augmentation.** Detect *when* to inject context — weak model or

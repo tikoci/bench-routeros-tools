@@ -61,6 +61,31 @@ Reruns of `run_live.py` are free when the cache is present.
 > should be regenerated with `./run_all.sh` on the next full run so their
 > `route-blackhole` labels reflect the corrected gold.
 
+## Vendor-doc oracle probe artifacts
+
+A static-oracle probe testing whether MikroTik's *own* type-annotated CLI
+Reference (the new `manual.mikrotik.com` Docusaurus docs, generated from
+`/console/inspect`) closes the inspect-vs-runtime gap (REPORT_LIVE.md F1). See
+[`docs/AGENTIC_FUTURES.md`](../docs/AGENTIC_FUTURES.md) §"Vendor-native docs".
+
+| Artifact | Source |
+| --- | --- |
+| `vendor_cli_ref/*.md` | raw MDX cached from `https://manual.mikrotik.com/docs/cli-reference/{path}.md` via `curl` on 2026-06-15 (`ip/route`, `ip/dns`, `ip/firewall/nat`, `interface/wireguard`, `interface/wifi`) |
+| `vendor_oracle_probe.csv` | `harness/vendor_oracle_probe.py` — per-trap verdicts (name-level vs type-level vs device) |
+
+The probe builds two oracles from the *same* vendor schema: `name-level`
+(arg-name existence only, a faithful stand-in for the bench's `/console/inspect`
+validator, `lib/chr.py:202-214`) and `type-level` (adds the published `switch` /
+`mandatory` / read-only annotations). The `name-level` model is cross-checked
+against the two real `/console/inspect` data points in `command_validity.csv`
+(`metric` → error, bare `blackhole` → ok) and is consistent with F1 on the third
+(`blackhole=yes` accepted). Each trap carries a `grounding` marker: the three
+`blackhole` forms are `device-replayed` (`blackhole_device_verify.csv`, CHR
+7.22.1 + 7.23); the rest are `derived` (vendor schema + RouterOS parser behavior,
+not replayed) and form the device-replay backlog. Re-run offline with
+`python3 harness/vendor_oracle_probe.py`; refresh the cache by re-`curl`ing the
+pages above (URL-stable).
+
 The structural snapshots above were first captured while the benchmark lived
 under
 `/Users/amm0/Lab/mikrotik-mcp/benchmark` and were migrated into this standalone
