@@ -300,6 +300,7 @@ already-captured runs with `harness/live/rescore.py` (no new model calls).
 | Routing signal, budget fit | `data/proxy_*.csv` |
 | Scorer replay, capability grid | `data/agent_replay.csv`, `data/capability_matrix.csv` |
 | Live pilots (§8): copilot/Claude, GPT matrix, Claude scale ladder | `data/live_pilot.*`, `data/live_gpt_matrix.*`, `data/live_ladder.*` |
+| The 49-task corpus, kinds of test, trap taxonomy, scoring labels | [`docs/CORPUS.md`](docs/CORPUS.md), `tasks/corpus.yaml` |
 
 Reproduce structural metrics with `./run_all.sh`; reproduce the live pilots with
 `harness/live/run_live.py`, `run_gpt_matrix.py`, and `run_live_ladder.py` (see the

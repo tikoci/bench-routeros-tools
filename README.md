@@ -194,6 +194,10 @@ real RouterOS syntax (it caught one authoring error during development). One tas
 (the v6 form has no v7 equivalent — see [`docs/REPORT_LIVE.md`](docs/REPORT_LIVE.md)
 Finding 7); it is scored `trap-fell`/`trap-avoided` rather than against a gold.
 
+See [`docs/CORPUS.md`](docs/CORPUS.md) for the **full task list** (all 49, by
+domain), the **kinds of test**, the **config-trap taxonomy**, and the scoring
+labels.
+
 ## Interpreting results
 
 - **Token counts are a GPT-family proxy** (`tiktoken` `o200k_base`). They are
