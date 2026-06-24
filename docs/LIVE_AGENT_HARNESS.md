@@ -8,6 +8,50 @@ Live runs should reuse the same `tasks/corpus.yaml` and scorer, but add a model
 adapter that produces candidate RouterOS commands from an approach-specific
 prompt/context bundle.
 
+## Live conditions (`run_live_ladder.py`)
+
+The Claude scale ladder compares **four** conditions per task. The first three are
+offline single-turn (the only deliberate difference is injected context); the
+fourth is **agentic + live-web** and carries a documented confound — read it as the
+realistic vendor-manual workflow, with `rosetta-context` as the closest offline-RAG
+comparison.
+
+| condition | what it adds | shape |
+|---|---|---|
+| `baseline` | task intent only | offline, single-turn |
+| `rosetta-context` | rosetta `routeros_search` result text injected | offline, single-turn |
+| `skills-context` | always-on skill frontmatter + best-matching SKILL.md body | offline, single-turn |
+| `vendordoc-steer` | **steer the agent to fetch `manual.mikrotik.com`** (`llms.txt` + the page `.md`), per MikroTik forum [270916](https://forum.mikrotik.com/t/steering-ai-to-use-new-manual-mikrotik-com/270916) | **agentic, multi-turn, web-enabled** |
+
+`vendordoc-steer` is the only condition given web access (`call_claude(allow_web=True)`
+→ `--allowedTools "WebFetch WebSearch"`); every other condition explicitly disallows
+web so the comparison isolates injected context, not capability. It is asked to end
+with a `SOURCE:` line citing the page it read; the runner parses that into
+`cited_source` so a miss can be diagnosed as *steered-but-didn't-fetch* vs
+*fetched-but-still-wrong* (the more interesting failure).
+
+## Task types: gold vs removed-capability traps
+
+Most tasks score a candidate against `gold_commands`. One task type has **no
+satisfiable gold**: a `removed_capability` trap, where the v6 form a model is primed
+to emit has *no* v7 equivalent at its path (device-verified, e.g.
+`route-unreachable` → `data/route_unreachable_device_verify.csv`). The scorer
+(`lib/scorer.py`) handles it explicitly: `trap-fell` (emitted a removed v6 form per
+`trap_tokens`) vs `trap-avoided` (emitted the documented v7 `acceptable_variants`, or
+no command at all = recognized the removal). Corpus-iterating harnesses fall back to
+`acceptable_variants`/`relevant_areas` when `gold_commands` is empty.
+
+## Re-scoring without re-running
+
+When only the *scoring* changes (a scorer rule or a gold), do **not** re-run the
+model. `harness/live/rescore.py` re-applies the current scorer to each captured run's
+stored `parsed_commands` and rebuilds `live_ladder.{csv,jsonl,_matrix.csv}` in the
+runner's current schema (idempotent for unchanged tasks; prints every label that
+moved). Prefer it over `backfill_cells.py`, which re-runs the model *and* writes an
+older CSV/matrix schema. Anchor tests for the parse fold and removed-capability
+scoring live in `harness/live/test_parse_commands.py` and `test_removed_capability.py`
+(`python -m unittest harness.live.test_removed_capability`).
+
 ## Adapter seam
 
 The intended interface is:

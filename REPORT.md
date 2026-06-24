@@ -260,16 +260,31 @@ device-valid bare `blackhole` flag. The corpus gold (`blackhole=yes`) was itself
 gap only device execution caught. This is the end-to-end proof of §4's premise and
 the strongest argument for the explain → validate → **run** split (§7).
 
+Two follow-on traps sharpen the ceiling on *offline* help. `route-unreachable` is a
+**removed-capability** trap (device-verified): the v6 `type=unreachable` has **no**
+creatable v7 form at all, so retrieval has nothing correct to surface — rosetta
+falls for it 3/3 like baseline (vs `route-blackhole`, where it can supply the
+renamed form). And a 4th live condition, **`vendordoc-steer`** — the realistic
+"steer the agent to read [manual.mikrotik.com](https://manual.mikrotik.com)"
+workflow (MikroTik forum 270916) — fetches reliably (cited a page in 32/33 Haiku
+reps) and has the best fabrication discipline of any column, yet still misses every
+device-truth trap: *reading the vendor manual ≠ knowing device truth*. Together they
+say retrieval/steering fix *renamed* and *fabricated* shapes but cannot close
+*removed* capabilities or *silent defaults* — only the run tier does.
+
 - [`docs/REPORT_LIVE.md`](docs/REPORT_LIVE.md) — grounded Claude pilot, the
-  closed-loop CHR device finding, and the **model-scale ladder** (Finding 6) with
-  `k=3` stability bands.
+  closed-loop CHR device finding, the **model-scale ladder** (Finding 6) with
+  `k=3` stability bands, and the **removed-capability + vendor-steering** traps
+  (Findings 7–8).
 - [`docs/REPORT_LIVE_GPT.md`](docs/REPORT_LIVE_GPT.md) — **cross-vendor** GPT pilot
   (Copilot CLI) confirming the trap holds across vendors.
 - [`docs/AGENTIC_FUTURES.md`](docs/AGENTIC_FUTURES.md) — forward recommendations
   for RouterOS agentic-AI tooling built on all of the above.
 
 Reproduce: `harness/live/run_live.py` (copilot/Claude orchestrator),
-`run_gpt_matrix.py` (GPT matrix), `run_live_ladder.py` (Claude scale ladder).
+`run_gpt_matrix.py` (GPT matrix), `run_live_ladder.py` (Claude scale ladder, now
+4 conditions incl. `vendordoc-steer`). After a scorer/gold change, re-label
+already-captured runs with `harness/live/rescore.py` (no new model calls).
 
 ---
 
@@ -280,7 +295,8 @@ Reproduce: `harness/live/run_live.py` (copilot/Claude orchestrator),
 | Always-on / marginal / activation token costs | `data/token_cost*.csv` |
 | 36/166 match, 62% top-3, destructive proximity | `data/tool_ambiguity.csv` |
 | 89% hit@5, 100% reconstruct | `data/retrieval.csv` |
-| 46/46 gold valid, 12/12 fixtures | `data/command_validity.csv` |
+| 49/49 gold valid, 12/12 fixtures | `data/command_validity.csv` |
+| Removed-capability device-verify (`type=unreachable` rejected) | `data/route_unreachable_device_verify.csv` |
 | Routing signal, budget fit | `data/proxy_*.csv` |
 | Scorer replay, capability grid | `data/agent_replay.csv`, `data/capability_matrix.csv` |
 | Live pilots (§8): copilot/Claude, GPT matrix, Claude scale ladder | `data/live_pilot.*`, `data/live_gpt_matrix.*`, `data/live_ladder.*` |

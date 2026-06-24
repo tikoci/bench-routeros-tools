@@ -53,6 +53,20 @@ A 10,000-foot view of what the data says. Full analysis + caveats in
   - **Augmentation is model-dependent:** it lifts weak models (and erases their
     fabrication) but is net-neutral-to-negative for strong ones (it invites
     over-specification). Not a constant win.
+  - **Reading the new vendor manual ≠ device truth.** A 4th live condition,
+    `vendordoc-steer`, measures the realistic "tell the agent to read
+    [manual.mikrotik.com](https://manual.mikrotik.com)" workflow (per MikroTik
+    forum [270916](https://forum.mikrotik.com/t/steering-ai-to-use-new-manual-mikrotik-com/270916)):
+    the agent fetches reliably (cited a page in **32/33** Haiku reps) and has the
+    **best fabrication discipline** of any column — yet still misses every
+    device-truth trap.
+  - **Two trap _kinds_.** `route-blackhole` is a _form-change_ trap (v6
+    `type=blackhole` → v7 bare flag) that grounding can fix; the new
+    `route-unreachable` is a **_removed-capability_** trap (the v6 type has **no**
+    v7 form at all — device-verified), so even rosetta falls for it 3/3 like
+    baseline. Retrieval can fix a renamed capability; only a **device run tier**
+    catches a removed one. A companion `dhcp-server-on-bridge` trap (a silent
+    `disabled=yes` default) is fixed _only_ by rosetta.
 
 > Scope: RouterOS **7.22.1**. Token counts are a GPT-family proxy
 > (`tiktoken o200k_base`) — comparative, not absolute. Live-pilot cells are small
@@ -172,9 +186,13 @@ refresh command. By default the suite reads committed snapshots; live checkouts
 are only needed for `./run_all.sh --refresh-tools`.
 
 `approaches.yaml` is the single source of truth for what each config "is".
-`tasks/corpus.yaml` holds 45 RouterOS **7.22.1** tasks (gold commands + decoys +
-state/safety tags). The CHR validator proved all 46 gold command lines are real
-RouterOS syntax (it caught one authoring error during development).
+`tasks/corpus.yaml` holds 49 RouterOS **7.22.1** tasks (gold commands + decoys +
+state/safety tags), including a small **config-trap** set that discriminates the
+augmentation strategies. The CHR validator proved all 49 gold command lines are
+real RouterOS syntax (it caught one authoring error during development). One task,
+`route-unreachable`, is a **removed-capability** trap with _no_ satisfiable gold
+(the v6 form has no v7 equivalent — see [`docs/REPORT_LIVE.md`](docs/REPORT_LIVE.md)
+Finding 7); it is scored `trap-fell`/`trap-avoided` rather than against a gold.
 
 ## Interpreting results
 
