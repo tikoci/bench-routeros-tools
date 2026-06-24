@@ -46,6 +46,9 @@ gold,fw-default-drop-input-last,/ip/firewall/filter add chain=input action=drop,
 forbidden,fw-default-drop-input-last,/ip/firewall/filter add chain=input action=drop place-before=0,n/a,ok,chr:inspect,path ok (ip/firewall/filter verb=add)
 gold,vlan-on-vlan-qinq,/interface/vlan add name=svlan vlan-id=200 interface=ether2 use-service-tag=yes,ok,ok,chr:inspect,path ok (interface/vlan verb=add)
 gold,mangle-mark-connection,/ip/firewall/mangle add chain=prerouting src-address=192.168.88.0/24 action=mark-connection new-connection-mark=lan-conn,ok,ok,chr:inspect,path ok (ip/firewall/mangle verb=add)
+gold,ipaddr-netmask-form,/ip/address add address=192.168.50.1/24 interface=bridge1,ok,ok,chr:inspect,path ok (ip/address verb=add)
+gold,fw-filter-comment-not-name,"/ip/firewall/filter add chain=input connection-state=established,related action=accept comment=allow-est",ok,ok,chr:inspect,path ok (ip/firewall/filter verb=add)
+gold,ipv6-address-assign,/ipv6/address add address=2001:db8:0:1::1/64 interface=bridge1,ok,ok,chr:inspect,path ok (ipv6/address verb=add)
 fixture:perfect,vlan-create-basic,/interface/vlan add name=vlan100 vlan-id=100 interface=ether2,ok,ok,chr:inspect,path ok (interface/vlan verb=add)
 fixture:wrong_path,vlan-create-basic,/interface/vlans add name=vlan100 vlan-id=100 interface=ether2,error,error,chr:inspect,unknown path segment 'vlans' under '/interface'
 fixture:wrong_target,vlan-create-basic,/interface/vlan add name=vlan100 vlan-id=999 interface=ether2,ok,ok,chr:inspect,path ok (interface/vlan verb=add)

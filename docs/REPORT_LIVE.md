@@ -12,8 +12,12 @@
 > which is why the corpus gold was corrected to the device-valid bare flag.
 > **Finding 6** below adds a **4-rung Claude scale ladder** (Haiku 4.5 → Opus 4.8)
 > with `k=3` stability bands, showing the same trap is invariant to **model
-> scale** up to the frontier — and [`AGENTIC_FUTURES.md`](AGENTIC_FUTURES.md)
-> turns all of this into forward recommendations for RouterOS agentic tooling.
+> scale** up to the frontier. **Findings 7–8** add two further device-verified
+> traps: `route-unreachable` (a *removed-capability* trap — the v6 form has **no**
+> v7 equivalent, so even retrieval can't rescue it) and `dhcp-server-on-bridge`
+> (a silent `disabled=yes` default that only rosetta fills in). And
+> [`AGENTIC_FUTURES.md`](AGENTIC_FUTURES.md) turns all of this into forward
+> recommendations for RouterOS agentic tooling.
 
 ## What this adds over the structural benchmark
 
@@ -207,6 +211,70 @@ budget on the **weak** model and on version-new / flag-shape uncertainty; for a
 strong model on common syntax, extra context mostly adds over-specification risk
 (echoing Finding 3).
 
+## Finding 7: a *removed-capability* trap — the v6 prior has no v7 form at all
+
+`route-blackhole` is a **form-change** trap: the v6 `type=blackhole` became the
+bare `blackhole` flag, so a grounded tier (rosetta) can supply the right form.
+`route-unreachable` is the harder cousin — a **removed-capability** trap. Device
+verification on CHR 7.23.1 (`data/route_unreachable_device_verify.csv`,
+`quickchr exec`) shows the v6 `unreachable`/`prohibit` route types have **no
+creatable v7 form** at `/ip/route`:
+
+| form (intent: "unreachable route for 172.16.0.0/12") | device verdict |
+|---|---|
+| `… type=unreachable` (v6 prior) | **REJECTED** — `bad parameter type` |
+| `… unreachable=yes` | **REJECTED** — `bad parameter unreachable` |
+| `… unreachable` (bare flag, by analogy to blackhole) | **REJECTED** — `bad parameter unreachable` |
+| `… type=prohibit` / `… prohibit` | **REJECTED** |
+| `… blackhole` (control) | **ACCEPTED** — stores `blackhole=true`, no `type` field |
+
+`/ip/route add` accepts only 13 args (inspect `syntax`), and `blackhole` is the
+**lone** surviving discard flag; the print legend still lists `U - unreachable,
+P - prohibit`, but those are for protocol-injected/legacy routes, not manual
+creation. So the task has **no satisfiable gold**. Leaving the old
+`type=unreachable` gold in place made the scorer report a *false* `perfect`
+(candidates matched a device-invalid gold while `syntax_valid=error` on every
+rep) — the same gold-vs-device lie as Finding 1, now caught structurally.
+
+The fix reframes it as a `removed_capability` task (`tasks/corpus.yaml`,
+`lib/scorer.py`, anchor tests in `harness/live/test_removed_capability.py`):
+`trap-fell` = emitted any removed v6 form (`type=…` / bare `unreachable`/`prohibit`),
+`trap-avoided` = emitted the v7 `blackhole` alternative **or** no command at all
+(recognized the removal). Re-scored over the Haiku `k=3` grid
+(`harness/live/rescore.py`, no new model calls):
+
+| approach | route-unreachable (k=3) |
+|---|---|
+| baseline | `trap-fell` 3/3 |
+| rosetta-context | `trap-fell` 3/3 |
+| skills-context | `trap-fell` 3/3 |
+| vendordoc-steer | `trap-fell` / `trap-avoided` / `hallucinated` (1 each) |
+
+The sharpest contrast with Finding 1: **rosetta does not rescue this one** — for
+blackhole it could retrieve the bare-flag form, but for unreachable there is
+*nothing correct to retrieve*, so it falls for the v6 prior 3/3 like baseline.
+The only reps that escaped were under `vendordoc-steer`: one fetched and then
+emitted *no* command (correctly recognizing the capability is gone), and one
+reached for `blackhole` — but as the device-invalid `blackhole=yes`, falling into
+route-blackhole's *own* trap (scored `hallucinated`, honestly). This is the
+inspect-vs-runtime + v6-prior story at its limit: when a capability is **deleted**
+rather than **renamed**, retrieval-of-the-right-form cannot help; only "recognize
+it's impossible, or run it and see it rejected" does.
+
+## Finding 8: `dhcp-server-on-bridge` — the cleanest *disabled-by-default* trap
+
+`/ip/dhcp-server add` defaults to `disabled=yes`, so omitting `disabled=no` yields
+a **syntactically valid, functionally dead** server — a `missing_arg` no syntax
+validator can catch (the purest extension of Finding 1's inspect-vs-runtime gap).
+On the Haiku `k=3` grid only **rosetta-context** supplied `disabled=no` (perfect
+3/3); `baseline`, `skills-context`, and `vendordoc-steer` all omitted it
+(`missing_arg` 3/3, `syntax_valid=ok` throughout). Notably, *steering to the
+vendor page did not help* — the agent fetched `dhcp-server.md` (cited 3/3) and
+still left the server disabled. This is the inverse lesson to Finding 7: where the
+failure is a **silent default** rather than a rejected token, the device's syntax
+check is blind to it, and only retrieval that surfaces the *default* (rosetta) or
+an actual functional read-back closes the gap.
+
 ## Future directions: scoped execution CLIs as a validation tier
 
 The MCP path exposes ~166 tools — a firehose that costs context and invites
@@ -255,6 +323,10 @@ quickchr start <instance> && quickchr exec <instance> "<command>"
 .venv/bin/python harness/live/run_live_ladder.py \
   --models claude-haiku-4-5-20251001,claude-sonnet-4-6,claude-opus-4-7 --repeats 3
 .venv/bin/python harness/live/analyze_ladder.py    # summarize data/live_ladder*
+# Removed-capability device-verify (Finding 7) + offline re-score after a scorer
+# or gold change (no new model calls):
+quickchr exec <instance> "/ip/route add dst-address=172.16.0.0/12 type=unreachable"  # -> bad parameter type
+.venv/bin/python harness/live/rescore.py           # re-apply current scorer to captured runs
 ```
 
 `data/live_cache/` is git-ignored (regenerable, and avoids committing model

@@ -16,7 +16,13 @@ Sub-scores (0/1 unless noted):
 
 predict_label() collapses these into one of:
   perfect | wrong_path | hallucinated | missing_arg | wrong_target |
-  incomplete_seq | unsafe
+  incomplete_seq | unsafe | trap-avoided | trap-fell
+
+The last two are for `removed_capability` tasks -- a v6 capability with no v7 form
+at its path (e.g. /ip/route `type=unreachable`, gone since the v6->v7 route rework;
+see data/route_unreachable_device_verify.csv). There is no satisfiable gold, so the
+normal labels don't apply: trap-fell = emitted a removed v6 form, trap-avoided =
+emitted the documented v7 alternative (or no command, recognizing the removal).
 """
 from __future__ import annotations
 
@@ -119,6 +125,48 @@ def best_gold(task: dict, candidate: str) -> str:
     return golds[0]
 
 
+def _removed_capability_label(task: dict, candidate_cmds: list[str]) -> tuple[str, dict]:
+    """Score a task whose intent names a capability removed in v7 -- no creatable
+    form exists at its path (e.g. /ip/route `type=unreachable`/`prohibit`, gone in
+    the v6->v7 route rework; only `blackhole` survives). See
+    data/route_unreachable_device_verify.csv.
+
+      trap-avoided (pass): emitted the documented v7 alternative (an
+        acceptable_variant, matched by path+verb+identity+flags, tolerant of
+        space/slash form) -- or no command at all (recognized the removal).
+      trap-fell  (fail):   emitted a removed v6 form -- a `trap_tokens` flag (bare
+        `unreachable`/`prohibit`) or arg-key (`type=...`, `unreachable=yes`).
+      otherwise: fall through to the normal label so an unrelated mistake (e.g. a
+        wrong_path to /routing/route) still surfaces honestly.
+    """
+    if not candidate_cmds:
+        return "trap-avoided", {"reason": "no command (capability recognized as removed)"}
+    # emitted the v7 alternative? (path+verb match, identity args match, every
+    # bare flag of the variant -- e.g. `blackhole` -- present in the candidate)
+    for var in task.get("acceptable_variants", []) or []:
+        vp, vv = _split(var)
+        va = _args(var)
+        vflags = {t for t in var.split()[1:] if _BARE_SEG.match(t) and t not in VERBS}
+        for c in candidate_cmds:
+            cp, cv = _split(c)
+            if cp != vp or cv != vv:
+                continue
+            ca = _args(c)
+            id_ok = all(ca.get(k) == va.get(k) for k in (set(va) & IDENTITY_ARGS))
+            cflags = {t for t in c.split()[1:] if _BARE_SEG.match(t)}
+            if id_ok and vflags <= cflags:
+                return "trap-avoided", {"reason": "emitted v7 alternative", "matched": var}
+    # fell for the removed v6 form?
+    trap = set(task.get("trap_tokens", []) or [])
+    for c in candidate_cmds:
+        toks = c.split()
+        keys = {t.split("=", 1)[0] for t in toks}
+        hit = trap & (keys | set(toks))
+        if hit:
+            return "trap-fell", {"reason": "emitted removed v6 form", "hit": sorted(hit)}
+    return _normal_label(task, candidate_cmds)
+
+
 def predict_label(task: dict, candidate_cmds: list[str]) -> tuple[str, dict]:
     cand = candidate_cmds[0] if candidate_cmds else ""
     # unsafe: matches a forbidden command
@@ -126,6 +174,13 @@ def predict_label(task: dict, candidate_cmds: list[str]) -> tuple[str, dict]:
         if cand.strip() == fb.strip():
             return "unsafe", {"reason": "matches forbidden_command"}
 
+    if task.get("removed_capability"):
+        return _removed_capability_label(task, candidate_cmds)
+    return _normal_label(task, candidate_cmds)
+
+
+def _normal_label(task: dict, candidate_cmds: list[str]) -> tuple[str, dict]:
+    cand = candidate_cmds[0] if candidate_cmds else ""
     gold = best_gold(task, cand)
     sub = score_one(gold, cand)
 

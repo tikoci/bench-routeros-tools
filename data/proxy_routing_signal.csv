@@ -44,3 +44,7 @@ read-dhcp-leases,1,1,1
 fw-default-drop-input-last,1,1,1
 vlan-on-vlan-qinq,1,0,1
 mangle-mark-connection,1,1,1
+ipaddr-netmask-form,1,1,1
+fw-filter-comment-not-name,1,1,1
+ipv6-address-assign,0,0,1
+route-unreachable,0,0,1

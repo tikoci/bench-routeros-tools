@@ -70,7 +70,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import yaml
 
 from lib import context_builders as cb
-from lib.scorer import predict_label
+from lib.scorer import _split, predict_label
 
 BENCH = Path(__file__).resolve().parents[2]
 DATA = BENCH / "data"
@@ -86,15 +86,49 @@ DEFAULT_TASKS = [
     "route-blackhole",
     "fw-allow-established-related",
     "wg-add-peer",
+    # Config traps added to give the ladder more than one discriminating task
+    # (see tasks/corpus.yaml "Config traps"): cross-vendor netmask, menu-specific
+    # comment-vs-name, v7 IPv6 menu reorg, v6-deprecated route type=, plus the
+    # promoted valid-syntax/dead-semantics dhcp default-disabled trap.
+    "ipaddr-netmask-form",
+    "fw-filter-comment-not-name",
+    "ipv6-address-assign",
+    "route-unreachable",
+    "dhcp-server-on-bridge",
 ]
 # Rung 3 mini-matrix: a small + a larger model so a gap can be attributed to
 # model size vs missing context. Override with LIVE_MODELS=a,b.
 DEFAULT_MODELS = ["claude-haiku-4-5-20251001", "claude-sonnet-4-6"]
-APPROACHES = ["baseline", "rosetta-context", "skills-context"]
+# vendordoc-steer is the agentic vendor-manual condition (forum.mikrotik.com/t/
+# steering-ai-to-use-new-manual-mikrotik-com/270916): instead of pre-injecting
+# retrieved text, the agent is steered to fetch manual.mikrotik.com/llms.txt and
+# the page .md itself (it is given web access in call_claude). Read it as the
+# realistic "tell the agent to use the new manual" workflow; baseline/rosetta/
+# skills remain offline single-turn, so the comparison carries an agentic+web
+# confound (documented in docs/REPORT_LIVE.md).
+APPROACHES = ["baseline", "rosetta-context", "skills-context", "vendordoc-steer"]
 
 OUTPUT_RULE = (
     "Return ONLY the RouterOS CLI command(s) needed, one per line. "
     "No prose, no explanation, no code fences, no comments."
+)
+
+# Steering preamble for the vendordoc-steer approach. Faithful to MikroTik forum
+# thread 270916 "Steering AI to use new manual.mikrotik.com" (Option B, the
+# per-question variant -- the per-task ladder has no persistent system prompt).
+# The trailing SOURCE: line is the forum's own "cite the page you read or you
+# answered from memory" verification check; the runner parses it into
+# `cited_source` so a miss can be diagnosed as steered-but-didn't-fetch vs
+# fetched-but-still-wrong.
+VENDORDOC_STEER = (
+    "Your training data for MikroTik RouterOS is unreliable (it is dominated by "
+    "the old v6 wiki.mikrotik.com). Before answering, fetch "
+    "https://manual.mikrotik.com/llms.txt, find the page matching this task, and "
+    "read its Markdown version (append .md to the page URL). Verify exact command "
+    "paths, property names, and enum values against that page and the CLI "
+    "Reference. Do NOT invent properties, paths, or flags. Assume RouterOS v7.\n"
+    "After the command line(s), add one final line exactly of the form: "
+    "SOURCE: <the manual.mikrotik.com .md URL you actually read>"
 )
 
 
@@ -160,29 +194,97 @@ def build_prompt(task: dict, approach: str) -> str:
             )
     elif approach == "skills-context":
         head = skills_context(task["intent"]) + "\n" + head
+    elif approach == "vendordoc-steer":
+        head = VENDORDOC_STEER + "\n\n" + head
     return f"{head}\n\n{OUTPUT_RULE}"
 
 
+SOURCE_RE = re.compile(r"(?im)^\s*SOURCE:\s*(\S+)\s*$")
+
+
+def extract_source(text: str) -> tuple[str, str]:
+    """Pull the trailing ``SOURCE: <url>`` citation line (vendordoc-steer's
+    forum-prescribed "cite the page you read" check) out of the answer.
+
+    Returns ``(text_without_source_line, cited_url_or_empty)``. The citation must
+    be removed before parse_commands so it is not mistaken for a command. Empty
+    string means the agent emitted no citation -- i.e. it was steered but did not
+    (or could not) actually fetch the manual.
+    """
+    matches = list(SOURCE_RE.finditer(text))
+    if not matches:
+        return text, ""
+    return SOURCE_RE.sub("", text), matches[-1].group(1)
+
+
+def is_session_limited(rec: dict) -> bool:
+    """True when `claude -p` returned the usage-limit sentinel instead of an
+    answer. These reps carry no model signal -- they must be excluded from
+    scoring, not counted as `empty` generations (which would masquerade as the
+    model declining the task). Detected so a run that crosses the session limit
+    mid-grid is honestly partial rather than silently contaminated.
+    """
+    if rec.get("exit_code", 0) == 0:
+        return False
+    return "session limit" in (rec.get("result") or "").lower()
+
+
 def parse_commands(text: str) -> list[str]:
-    """Extract RouterOS command lines from a model's free-text answer."""
+    """Extract RouterOS command lines from a model's free-text answer.
+
+    Folds the console menu-context form back into single commands: a bare menu
+    path on its own line (`/interface/vlan`) changes the current path, and a
+    following verb line (`add ...`) is applied in that context. That two-step
+    form is valid RouterOS console syntax -- agents steered to the vendor manual
+    emit it -- so the path line is joined to the verb line rather than scored as
+    a separate (argument-less) command, which mislabels it `missing_arg`.
+    """
     text = re.sub(r"```[a-zA-Z]*", "", text).replace("```", "")
-    cmds = []
+    raw = []
     for line in text.splitlines():
         line = line.strip().lstrip("$").strip()
+        # drop leading numbering like "1. " or "- " first, so a numbered menu
+        # path line is still recognized as a command path below
+        line = re.sub(r"^(\d+[.)]\s*|[-*]\s*)", "", line)
         if not line:
             continue
         # a command either starts at a menu path or has a verb token
         if line.startswith("/") or re.search(
             r"\b(add|set|remove|print|enable|disable|save|export)\b", line
         ):
-            # drop leading numbering like "1. " or "- "
-            line = re.sub(r"^(\d+[.)]\s*|[-*]\s*)", "", line)
+            raw.append(line)
+    cmds = []
+    cur_path = ""  # menu context set by a bare-path navigation line
+    for line in raw:
+        path, verb = _split(line)
+        if line.startswith("/"):
+            if verb is None and "=" not in line:
+                cur_path = path           # navigation only -- changes context
+                continue
+            cmds.append(line)             # explicit "/path verb ..." -- complete
+            cur_path = path
+        elif cur_path:
+            cmds.append(f"{cur_path} {line}")  # verb-only -- apply in context
+        else:
             cmds.append(line)
     return cmds
 
 
-def call_claude(prompt: str, model: str) -> dict:
-    """One isolated, non-interactive `claude -p` generation. Returns a record."""
+WEB_TOOLS = "WebFetch WebSearch"
+
+
+def call_claude(prompt: str, model: str, allow_web: bool = False) -> dict:
+    """One isolated, non-interactive `claude -p` generation. Returns a record.
+
+    `allow_web` gates the *only* deliberate cross-approach difference for
+    vendordoc-steer: the agent may use WebFetch/WebSearch to pull
+    manual.mikrotik.com. Every other approach runs fully offline (web explicitly
+    disallowed), so the comparison isolates injected context, not capability.
+    Web-allowed runs are agentic/multi-turn, so they get a longer timeout.
+    """
+    tool_flag = (["--allowedTools", WEB_TOOLS] if allow_web
+                 else ["--disallowedTools", WEB_TOOLS])
+    timeout = 300 if allow_web else 180
     with tempfile.TemporaryDirectory(prefix="ros-live-", dir="/tmp") as cwd:
         cmd = [
             "claude", "-p", prompt,
@@ -190,11 +292,12 @@ def call_claude(prompt: str, model: str) -> dict:
             "--setting-sources", "",
             "--strict-mcp-config",
             "--disable-slash-commands",
+            *tool_flag,
             "--output-format", "json",
         ]
         t0 = time.time()
         proc = subprocess.run(
-            cmd, cwd=cwd, capture_output=True, text=True, timeout=180
+            cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout
         )
         dt = time.time() - t0
     rec = {"exit_code": proc.returncode, "wall_s": round(dt, 1)}
@@ -267,10 +370,23 @@ def main() -> None:
                 for ap_name in approaches:
                     prompt = build_prompt(task, ap_name)
                     phash = hashlib.sha256(prompt.encode()).hexdigest()[:12]
+                    allow_web = ap_name == "vendordoc-steer"
                     for rep in range(repeats):
-                        rec = call_claude(prompt, model)
-                        cmds = parse_commands(rec.get("result", ""))
-                        label, sub = predict_label(task, cmds) if cmds else ("empty", {})
+                        rec = call_claude(prompt, model, allow_web=allow_web)
+                        # split out the steer citation before command parsing
+                        answer, cited = extract_source(rec.get("result", ""))
+                        cmds = parse_commands(answer)
+                        if is_session_limited(rec):
+                            # usage cap hit -- not a model answer; exclude from scoring
+                            label, sub, cmds, cited = "session-limited", {}, [], ""
+                        elif cmds:
+                            label, sub = predict_label(task, cmds)
+                        elif task.get("removed_capability"):
+                            # no command for a removed-capability task = the agent
+                            # recognized the v6 form has no v7 equivalent (pass).
+                            label, sub = predict_label(task, [])
+                        else:
+                            label, sub = "empty", {}
                         # syntax-validate each emitted command on CHR
                         validity = "n/a"
                         if chr_ is not None and cmds:
@@ -282,6 +398,7 @@ def main() -> None:
                             "rep": rep, "label": label, "syntax_valid": validity,
                             "n_cmds": len(cmds), "n_gold": len(task["gold_commands"]),
                             "exit_code": rec["exit_code"], "cost_usd": rec.get("cost_usd"),
+                            "num_turns": rec.get("num_turns"), "cited_source": cited,
                             "prompt_hash": phash,
                         })
                         record = {
@@ -293,8 +410,12 @@ def main() -> None:
                         jsonl_fh.write(json.dumps(record, ensure_ascii=False) + "\n")
                         jsonl_fh.flush()
                         rtag = f" rep={rep}" if repeats > 1 else ""
+                        webtag = ""
+                        if allow_web:
+                            webtag = (f" turns={rec.get('num_turns')} "
+                                      f"cite={'Y' if cited else 'N'}")
                         print(f"  {ap_name:16} {tid:28}{rtag} -> {label:14} "
-                              f"syntax={validity:5} cmds={len(cmds)} "
+                              f"syntax={validity:5} cmds={len(cmds)}{webtag} "
                               f"${rec.get('cost_usd') or 0:.3f}")
     finally:
         jsonl_fh.close()
@@ -302,7 +423,8 @@ def main() -> None:
             chr_.stop()
 
     fields = ["approach", "task", "model", "rep", "label", "syntax_valid",
-              "n_cmds", "n_gold", "exit_code", "cost_usd", "prompt_hash"]
+              "n_cmds", "n_gold", "exit_code", "cost_usd", "num_turns",
+              "cited_source", "prompt_hash"]
     with open(DATA / "live_ladder.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=fields)
         w.writeheader()
@@ -317,16 +439,26 @@ def main() -> None:
     for model, ap_name, tid in cell_keys:
         sub = [r for r in rows if r["model"] == model
                and r["approach"] == ap_name and r["task"] == tid]
-        labels = [r["label"] for r in sub]
-        modal, modal_n = Counter(labels).most_common(1)[0]
+        # session-limited reps carry no signal -- score only the real ones, but
+        # surface n_real so a partial cell can't be mistaken for a complete one.
+        real = [r for r in sub if r["label"] != "session-limited"]
+        labels = [r["label"] for r in real]
+        if labels:
+            modal, modal_n = Counter(labels).most_common(1)[0]
+            agreement = round(modal_n / len(labels), 2)
+        else:
+            modal, agreement = "session-limited", 0.0
         matrix_rows.append({
             "model": model, "approach": ap_name, "task": tid,
-            "n_rep": len(sub),
-            "n_perfect": sum(1 for r in sub if r["label"] == "perfect"),
-            "n_syntax_ok": sum(1 for r in sub if r["syntax_valid"] == "ok"),
+            "n_rep": len(sub), "n_real": len(real),
+            "n_perfect": sum(1 for r in real if r["label"] == "perfect"),
+            "n_syntax_ok": sum(1 for r in real if r["syntax_valid"] == "ok"),
+            # vendordoc-steer only: reps where the agent emitted a manual.mikrotik
+            # citation (proxy for "actually fetched the page"). 0 on offline approaches.
+            "n_cited": sum(1 for r in real if r.get("cited_source")),
             "modal_label": modal,
-            "agreement": round(modal_n / len(sub), 2),
-            "labels": "|".join(labels),
+            "agreement": agreement,
+            "labels": "|".join(labels) if labels else "session-limited",
         })
     with open(DATA / "live_ladder_matrix.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(matrix_rows[0].keys()))

@@ -541,3 +541,78 @@ tasks:
     gold_commands:
       - "/ip/firewall/mangle add chain=prerouting src-address=192.168.88.0/24 action=mark-connection new-connection-mark=lan-conn"
     expected_validation: ok
+
+  # ---------------- Config traps (training-prior baits) ----------------
+  # These extend the trap taxonomy beyond route-blackhole so the live ladder has
+  # more than one discriminating task. Each baits a characteristic wrong form and
+  # produces a deterministic scorer label; the first two are also caught by the
+  # CHR /console/inspect validator (unknown arg).
+  - id: ipaddr-netmask-form
+    domain: ip-address
+    intent: "Assign 192.168.50.1 with subnet mask 255.255.255.0 to bridge1."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/ip/address", "address", "interface"]
+    # Trap: Cisco/Linux prior emits `netmask=255.255.255.0`; /ip/address has no
+    # `netmask` property (rosetta lookup_property netmask @ /ip/address: absent) --
+    # v7 wants CIDR. extra-key => scorer `hallucinated` + CHR inspect rejects.
+    gold_commands:
+      - "/ip/address add address=192.168.50.1/24 interface=bridge1"
+    expected_validation: ok
+
+  - id: fw-filter-comment-not-name
+    domain: firewall
+    intent: "Add an input rule accepting established,related and label it allow-est."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/firewall/filter", "chain=input", "connection-state", "comment"]
+    # Trap: filter rules have no `name`, only `comment` (rosetta lookup_property
+    # name @ /ip/firewall/filter: absent). name=... => `hallucinated` + CHR rejects.
+    gold_commands:
+      - "/ip/firewall/filter add chain=input connection-state=established,related action=accept comment=allow-est"
+    expected_validation: ok
+
+  - id: ipv6-address-assign
+    domain: ipv6
+    intent: "Assign 2001:db8:0:1::1/64 to bridge1."
+    version: stable-v7
+    state_dependency: mutation
+    safety_class: writes-config
+    relevant_areas: ["/ipv6/address", "address", "interface"]
+    # Trap: v7 split IPv6 into /ipv6/address; prior emits /ip/address => wrong_path.
+    gold_commands:
+      - "/ipv6/address add address=2001:db8:0:1::1/64 interface=bridge1"
+    expected_validation: ok
+
+  - id: route-unreachable
+    domain: routes
+    intent: "Add an unreachable route for 172.16.0.0/12."
+    version: stable-v7
+    state_dependency: stateless
+    safety_class: writes-config
+    relevant_areas: ["/ip/route", "unreachable", "type"]
+    # REMOVED-CAPABILITY TRAP (device-verified, data/route_unreachable_device_verify.csv,
+    # CHR 7.23.1 quickchr exec). Unlike route-blackhole -- where the v6 `type=blackhole`
+    # became the bare `blackhole` flag (form moved, capability kept) -- the v6
+    # `unreachable`/`prohibit` route types have NO creatable v7 form at /ip/route:
+    # every form is device-rejected (`type=unreachable` -> "bad parameter type";
+    # `unreachable=yes` / bare `unreachable` -> "bad parameter unreachable"; same for
+    # prohibit). `/ip/route add` accepts only 13 args (inspect syntax) and `blackhole`
+    # is the lone surviving discard flag; a created blackhole route stores
+    # `blackhole=true` (a boolean), with no `type` field. The print legend still lists
+    # `U - unreachable, P - prohibit`, but those flags are for protocol-injected/legacy
+    # routes, not manual creation.
+    #
+    # So there is NO satisfiable gold. Scored as removed_capability (lib/scorer.py):
+    #   trap-fell (fail): emits a removed v6 form -- any trap_token (`type=...`,
+    #     bare/`=yes` `unreachable`/`prohibit`).
+    #   trap-avoided (pass): emits the documented v7 alternative (the blackhole
+    #     discard route below) OR no command at all (recognizes the removal).
+    removed_capability: true
+    trap_tokens: ["type", "unreachable", "prohibit"]
+    gold_commands: []          # unsatisfiable: no v7 form creates an unreachable route
+    acceptable_variants:
+      - "/ip/route add dst-address=172.16.0.0/12 blackhole"  # only v7 discard route
+    expected_validation: error

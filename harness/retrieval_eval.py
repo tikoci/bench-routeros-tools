@@ -35,8 +35,11 @@ TOPK = 5
 
 
 def gold_path(task: dict) -> str:
-    cmd = task["gold_commands"][0].strip()
-    path = cmd.split()[0]
+    # removed_capability tasks have no satisfiable gold -- fall back to the v7
+    # alternative, else the first relevant_area, for a real menu path to score.
+    golds = task["gold_commands"] or task.get("acceptable_variants") or task.get("relevant_areas") or [""]
+    cmd = golds[0].strip()
+    path = cmd.split()[0] if cmd else ""
     # normalize: keep the menu path, drop a trailing verb like add/set/print
     segs = [s for s in path.split("/") if s]
     if segs and segs[-1] in {"add", "set", "print", "remove", "save", "disable", "enable"}:
@@ -73,17 +76,21 @@ async def run() -> list[dict]:
                     break
             hit_any = path_hit(text, gp)
 
-            # proxy D: explain the gold command
+            # proxy D: explain the gold command (skip removed_capability tasks --
+            # no satisfiable gold to reconstruct; the v7 alternative is explained
+            # under route-blackhole already).
             recon = 0
-            try:
-                ex = await s.call_tool(
-                    "routeros_explain_command",
-                    {"command": task["gold_commands"][0], "ros_version": "7.22.1"},
-                )
-                extext = result_text(ex)
-                recon = int(path_hit(extext, gp))
-            except Exception:
-                recon = 0
+            explain_cmd = (task["gold_commands"] or task.get("acceptable_variants") or [""])[0]
+            if explain_cmd:
+                try:
+                    ex = await s.call_tool(
+                        "routeros_explain_command",
+                        {"command": explain_cmd, "ros_version": "7.22.1"},
+                    )
+                    extext = result_text(ex)
+                    recon = int(path_hit(extext, gp))
+                except Exception:
+                    recon = 0
 
             rows.append(
                 {

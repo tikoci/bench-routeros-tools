@@ -1,0 +1,7 @@
+version,form,command,accepted,route_created,device_message,tool
+7.23.1,type=unreachable,/ip/route add dst-address=172.16.0.0/12 type=unreachable,no,no,bad parameter type (line 1 column 44),quickchr exec
+7.23.1,unreachable=yes,/ip/route add dst-address=172.16.0.0/12 unreachable=yes,no,no,bad parameter unreachable (line 1 column 51),quickchr exec
+7.23.1,bare-unreachable,/ip/route add dst-address=172.16.0.0/12 unreachable,no,no,bad parameter unreachable (line 1 column 51),quickchr exec
+7.23.1,type=prohibit,/ip/route add dst-address=172.16.0.0/12 type=prohibit,no,no,bad parameter type (line 1 column 44),quickchr exec
+7.23.1,bare-prohibit,/ip/route add dst-address=172.16.0.0/12 prohibit,no,no,bad parameter prohibit (line 1 column 48),quickchr exec
+7.23.1,bare-blackhole (control),/ip/route add dst-address=172.16.9.0/24 blackhole,yes,yes,(accepted; stored blackhole=true; flag B/As),quickchr exec

@@ -41,8 +41,10 @@ def toks(text: str) -> set[str]:
 
 
 def gold_path_tokens(task: dict) -> set[str]:
-    cmd = task["gold_commands"][0]
-    path = cmd.split()[0]
+    # removed_capability tasks have no satisfiable gold -- fall back to the v7
+    # alternative, else the first relevant_area, so the path tokens are still real.
+    golds = task["gold_commands"] or task.get("acceptable_variants") or task.get("relevant_areas") or [""]
+    path = golds[0].split()[0] if golds[0] else ""
     return {t for t in re.split(r"[/\s]+", path.lower()) if t and len(t) > 1}
 
 
