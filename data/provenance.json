@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-05-31T14:49:00Z",
+  "captured_at": "2026-10-19T20:07:09.526351+00:00",
   "chr": {
     "image": "~/GitHub/chr-armed/Machines/chr-7.22.1-x86.img",
     "routeros_version": "7.22.1"
@@ -13,7 +13,8 @@
     "tool_count": 14
   },
   "routeros_skills": {
-    "skill_count": 12,
-    "source_path": "/Users/amm0/GitHub/routeros-skills"
+    "skill_count": 18,
+    "source_path": "/home/hatch/workspace/vendor/routeros-skills",
+    "source_revision": "bda94184d855c9c98590f73b30e50400334ed4eb"
   }
 }

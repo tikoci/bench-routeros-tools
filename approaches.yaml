@@ -7,12 +7,15 @@
 # This file is the single source of truth for what each config "is". The harness
 # reads it to build context, count tokens, and frame the comparison.
 
-# Where the raw context artifacts live (relative to repo root).
+# Where the raw context artifacts live (relative to repo root, unless noted).
+# The skills snapshot is committed (data/skills.json); refresh it from a
+# routeros-skills checkout with:
+#   ROUTEROS_SKILLS_DIR=/path/to/routeros-skills python3 -c \
+#     "import sys; sys.path.insert(0,'harness'); from refresh_tools import refresh_skills; refresh_skills()"
 sources:
   mcp_tools: data/mcp_tools.json        # 166 mikrotik-mcp tool schemas (executable, SSH)
   rosetta_tools: data/rosetta_tools.json # 14 rosetta MCP tool schemas (read-only docs RAG)
-  skills_snapshot: data/skills.json     # routeros-skills snapshot
-  skills_dir: ~/GitHub/routeros-skills  # refresh override: ROUTEROS_SKILLS_DIR
+  skills_snapshot: data/skills.json     # routeros-skills snapshot (18 skills, see data/provenance.json)
 
 # Capability tiers (used to keep token-cost comparisons fair / apples-to-apples).
 #   knowledge   : can inform, cannot touch a device
@@ -35,7 +38,7 @@ approaches:
   skills:
     label: "routeros-skills only"
     description: >
-      12 markdown SKILL.md guides. Progressive disclosure: only the YAML frontmatter
+      18 markdown SKILL.md guides. Progressive disclosure: only the YAML frontmatter
       description is always-on; the full body loads when the skill is invoked.
     always_on: [skills_frontmatter]
     activated: [skill_body]
